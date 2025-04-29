@@ -38,37 +38,17 @@
                                     </div> </a> 
                             </div>                             
                         </div>
-                        <div class="col-auto"> <a class="btn btn-primary" href="auth.html" role="button">Личный кабинет</a> 
+                        <div class="col-auto"> <a class="btn btn-primary" id="userButton" href="auth.html" role="button">Личный кабинет</a> 
                         </div>                         
                     </div>
                     <hr class="m-0">
                 </div>
             </div>             
             <nav class="navbar navbar-expand-lg pb-0 pt-0 sticky-top"> 
-                <div class="container"> 
-                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggler12" aria-controls="" aria-expanded="false" aria-label="Toggle navigation"> <span class="navbar-toggler-icon"></span> 
-                    </button>
-                    <div class="collapse navbar-collapse" id="navbarToggler12">
-                        <ul class="me-auto navbar-nav"> 
-                            <li class="nav-item"> <a class="link-dark nav-link p-lg-3" href="index.html">Главная</a> 
-                            </li>
-                            <li class="nav-item"> <a class="link-dark nav-link p-lg-3" href="services.html">Услуги</a> 
-                            </li>
-                            <li class="nav-item"> 
-</li>
-                            <li class="nav-item"> <a class="link-dark nav-link p-lg-3" href="doctors.html">Врачи</a> 
-                            </li>
-                            <li class="nav-item"> <a class="link-dark nav-link p-lg-3" href="about.html">О нас</a> 
-                            </li>
-                            <li class="nav-item"> 
-</li>
-                        </ul>
-                    </div>
-                </div>                 
-            </nav>
+</nav>
         </header>
         <main>
-            <div class="container py-5">
+            <div class="container py-5 w-50">
                 <h2 class="text-primary mb-4 text-center">Запись на приём</h2>
                 <div id="step-1">
                     <!-- Специализация -->
@@ -93,14 +73,7 @@
                         <div class="table-responsive">
                             <table class="table table-bordered text-center align-middle">
                                 <thead class="table-light" id="scheduleHead">
-                                    <!-- Пример:
-                <tr>
-                    <th>Пн, 22 Апр</th>
-                    <th>Вт, 23 Апр</th>
-                    ...
-                </tr>
-                -->
-                                </thead>
+</thead>
                                 <tbody id="scheduleBody">
                                     <!-- Время по столбцам -->
                                 </tbody>
@@ -111,28 +84,33 @@
                 <div id="step-2" style="display: none;">
                     <div class="card p-4">
                         <!-- Кнопка "Назад" -->
-                        <button type="button" id="backButton" class="btn btn-light border w-25 mb-3"><i class="bi bi-arrow-left me-1"></i> Назад
+                        <button type="button" id="backButton" class="btn btn-light border w-25 mb-3">
+                            <i class="bi bi-arrow-left me-1"></i> Назад
                         </button>
                         <h4 class="mb-3">Вы записываетесь на приём:</h4>
                         <ul class="list-unstyled mb-4">
-                            <li>
-                                <strong>Специализация:</strong> <span id="summary-specialization"></span>
+                            <li><strong>Специализация:</strong> <span id="summary-specialization"></span>
                             </li>
-                            <li>
-                                <strong>Врач:</strong> <span id="summary-doctor"></span>
+                            <li><strong>Врач:</strong> <span id="summary-doctor"></span>
                             </li>
-                            <li>
-                                <strong>Дата:</strong> <span id="summary-date"></span>
+                            <li><strong>Дата:</strong> <span id="summary-date"></span>
                             </li>
-                            <li>
-                                <strong>Время:</strong> <span id="summary-time"></span>
+                            <li><strong>Время:</strong> <span id="summary-time"></span>
                             </li>
                         </ul>
                         <!-- Форма ввода личных данных -->
                         <form id="patientForm">
                             <div class="mb-3">
-                                <label for="fullName" class="form-label">ФИО</label>
-                                <input type="text" class="form-control" id="fullName" required>
+                                <label for="secondName" class="form-label">Фамилия</label>
+                                <input type="text" class="form-control" id="secondName" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="firstName" class="form-label">Имя</label>
+                                <input type="text" class="form-control" id="firstName" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="surname" class="form-label">Отчество</label>
+                                <input type="text" class="form-control" id="surname">
                             </div>
                             <div class="mb-3">
                                 <label for="birthDate" class="form-label">Дата рождения</label>
@@ -151,13 +129,22 @@
                             </div>
                             <div class="mb-3">
                                 <label for="phone" class="form-label">Номер телефона</label>
-                                <input type="tel" class="form-control" id="phone" required>
+                                <input type="tel" class="form-control" id="phone" placeholder="+7 (___) ___-__-__" required>
+                                <div id="phoneError" class="text-danger error" style="min-height: 1.2em; word-break: break-word; word-wrap: break-word; overflow-wrap: break-word; white-space: normal;"></div>
+                                <script src="https://unpkg.com/imask">
+                                 </script>
+                                <script>
+                                    const phoneInput = document.getElementById('phone');
+                                        IMask(phoneInput, {
+                                            mask: '+{7} (000) 000-00-00'
+                                        });
+                                </script>
                             </div>
                             <div class="form-check mb-3">
                                 <input type="checkbox" class="form-check-input" id="consentCheckbox" required>
                                 <label class="form-check-label" for="consentCheckbox">Я согласен на обработку персональных данных</label>
                             </div>
-                            <button type="submit" class="btn btn-primary">Подтвердить запись</button>
+                            <button type="submit" class="btn btn-primary">Записаться</button>
                         </form>
                     </div>
                 </div>

@@ -5,12 +5,49 @@ document.addEventListener("DOMContentLoaded", async () => {
   const scheduleHead = document.getElementById("scheduleHead");
   const scheduleBody = document.getElementById("scheduleBody");
   const patientForm = document.getElementById("patientForm");
+  const userButton = document.getElementById("userButton");
 
   let selectedDoctorId = null;
   let selectedSlot = null;
   let selectedSpecialization = null;
   let selectedDoctor = null;
 
+  loadPatientData();
+
+  // Проверка даты 
+  const dateInput = document.getElementById("birthDate");
+  if (dateInput) {
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, "0");
+    const dd = String(today.getDate()).padStart(2, "0");
+
+    const minDate = `${yyyy - 110}-${mm}-${dd}`;
+    const maxDate = `${yyyy - 18}-${mm}-${dd - 1}`;
+    dateInput.min = minDate;
+    dateInput.max = maxDate;
+  }
+
+  // Валидация номера телефона
+    const phoneInput = document.getElementById('phone');
+    const phoneError = document.getElementById('phoneError');
+
+    
+    const validatePhone = () => {
+        const digits = phoneInput.value.replace(/\D/g, '');
+
+        if (digits.length !== 11) {
+            phoneInput.classList.add('is-invalid');
+            phoneError.textContent = 'Введите полный 11-значный номер телефона.';
+            return
+        } else {
+            phoneInput.classList.remove('is-invalid');
+            phoneError.textContent = '';
+           return
+        }
+    };
+
+    phoneInput.addEventListener('input', validatePhone);
 
   // Загрузка специализаций
   async function loadSpecialties() {
@@ -88,7 +125,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     selectedSlot = slot;
     showPatientForm();
     // patientForm.classList.remove("d-none");
-    loadPatientData(); // попробовать подтянуть личные данные
+    //loadPatientData(); // попробовать подтянуть личные данные
   }
 
     function showPatientForm() {
@@ -113,11 +150,16 @@ document.addEventListener("DOMContentLoaded", async () => {
       const response = await fetch("http://192.168.1.207:8080/api/patient/me");
       if (!response.ok) return;
       const patient = await response.json();
-      document.getElementById("fullName").value = patient.full_name || "";
+      document.getElementById("secondName").value = patient.second_name || "";
+      document.getElementById("firstName").value = patient.first_name || "";
+      document.getElementById("surname").value = patient.surname || "";
       document.getElementById("birthDate").value = patient.birth_date || "";
       document.getElementById("phone").value = patient.phone || "";
       if (patient.gender === "Мужской") document.getElementById("genderMale").checked = true;
       if (patient.gender === "Женский") document.getElementById("genderFemale").checked = true;
+      userButton.textContent = `${patient.first_name} ${patient.second_name}`;
+      userButton.removeAttribute("href");
+      userButton.style.pointerEvents = "none";
     } catch (e) {
       console.warn("Пациент не авторизован");
     }
@@ -133,7 +175,9 @@ document.addEventListener("DOMContentLoaded", async () => {
       doctor_id: selectedDoctorId,
       slot: selectedSlot,
       patient: {
-        full_name: document.getElementById("fullName").value,
+        second_name: document.getElementById("secondName").value,
+        first_name: document.getElementById("firstName").value,
+        surname: document.getElementById("surname").value,
         birth_date: document.getElementById("birthDate").value,
         gender: document.querySelector('input[name="gender"]:checked')?.value,
         phone: document.getElementById("phone").value

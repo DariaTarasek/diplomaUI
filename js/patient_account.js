@@ -3,8 +3,13 @@ const { createApp } = Vue;
 createApp({
   data() {
     return {
+      patient: {
+        secondName: '',
+        firstName: '',
+        surname: ''
+      },
+      isPopoverVisible: false,
       activeTab: 'upcoming',
-      patient_name: '',
       tabs: [
         { id: 'upcoming', label: 'Предстоящие записи' },
         { id: 'history', label: 'История посещений' },
@@ -17,8 +22,19 @@ createApp({
       }
     };
   },
+  computed: {
+    fullName() {
+      return [this.patient.secondName, this.patient.firstName, this.patient.surname]
+        .filter(Boolean)
+        .join(' ');
+    }
+  },
   mounted() {
     this.fetchPatientData();
+    document.addEventListener('click', this.handleClickOutside);
+  },
+  beforeUnmount() {
+    document.removeEventListener('click', this.handleClickOutside);
   },
   methods: {
     fetchPatientData() {
@@ -28,20 +44,25 @@ createApp({
           return res.json();
         })
         .then(json => {
-          this.patient_name = json.patient_name || '-';
+          this.patient.secondName = json.second_name;
+          this.patient.firstName = json.first_name;
+          this.patient.surname = json.surname; 
           this.data.upcoming = json.upcoming || [];
           this.data.history = json.history || [];
           this.data.tests = json.tests || [];
-
-          const nameButton = document.getElementById('patient_name');
-          if (nameButton) {
-            nameButton.textContent = this.patient_name;
-          }
         })
-
         .catch(err => {
           console.error('Ошибка при получении данных:', err);
         });
+    },
+    togglePopover() {
+      this.isPopoverVisible = !this.isPopoverVisible;
+    },
+    handleClickOutside(event) {
+      const popover = document.getElementById('patient-profile');
+      if (popover && !popover.contains(event.target)) {
+        this.isPopoverVisible = false;
+      }
     }
   }
 }).mount('#app');
