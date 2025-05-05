@@ -100,6 +100,7 @@
                         <tr>
                             <th>ФИО</th>
                             <th>Email</th>
+                            <th>Телефон</th>
                             <th>Роль</th>
                             <th>Специализация</th>
                             <th>Действия</th>
@@ -109,6 +110,7 @@
                         <tr v-for="s in staff" :key="s.id">
                             <td>{{ s.second_name }} {{ s.first_name }} {{ s.surname }}</td>
                             <td>{{ s.email }}</td>
+                            <td>{{ s.phone }}</td>
                             <td>{{ getRoleName(s.role) }}</td>
                             <td>{{ getSpecialtyName(s.specialty) }}</td>
                             <td>
@@ -129,12 +131,27 @@
                                 <div class="modal-body">
                                     <input type="hidden" v-model="form.id">
                                     <div class="mb-3">
-                                        <label class="form-label">ФИО</label>
-                                        <input v-model="form.fullName" type="text" class="form-control" required>
+                                        <label class="form-label">Фамилия</label>
+                                        <input v-model="form.second_name" type="text" class="form-control" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Имя</label>
+                                        <input v-model="form.first_name" type="text" class="form-control" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Отчество</label>
+                                        <input v-model="form.surname" type="text" class="form-control" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Телефон</label>
+                                        <input v-model="form.phone" id="phone" type="tel" placeholder="+7 (___) ___-__-__" class="form-control" :class="{'is-invalid': phoneError}"> 
+                                        <script src="https://unpkg.com/imask"></script>
+                                        <div class="invalid-feedback">{{ phoneError }}</div>
                                     </div>
                                     <div class="mb-3">
                                         <label class="form-label">Email</label>
-                                        <input v-model="form.email" type="email" class="form-control">
+                                        <input v-model="form.email" type="email" class="form-control" :class="{'is-invalid': emailError}">
+                                        <div class="invalid-feedback">{{ emailError }}</div>
                                     </div>
                                     <div class="mb-3">
                                         <label class="form-label">Роль</label>
@@ -148,6 +165,15 @@
                                             <option value="">Выберите специализацию</option>
                                             <option v-for="s in specialties" :key="s.id" :value="s.id">{{ s.name }}</option>
                                         </select>
+                                    </div>
+                                    <!-- Новые поля только для врачей -->
+                                    <div class="mb-3" v-if="form.role === 'doctor'">
+                                        <label class="form-label">Стаж (в годах)</label>
+                                        <input v-model="form.experience" type="number" class="form-control" min="0">
+                                    </div>
+                                    <div class="mb-3" v-if="form.role === 'doctor'">
+                                        <label class="form-label">Образование</label>
+                                        <input v-model="form.education" type="text" class="form-control">
                                     </div>
                                 </div>
                                 <div class="modal-footer">

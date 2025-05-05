@@ -17,8 +17,8 @@
     <body class="text-muted">
         <header class="bg-white"> 
             <div class="navbar-light"> 
-                <div class="container"> 
-                    <div class="align-items-center bg-white gx-2 pb-0 pt-3 py-3 row"> 
+                <div class="container mb-3"> 
+                    <div class="align-items-center gx-2 py-3 row"> 
                         <div class="col"> <a href="index.html" class="align-items-center d-inline-flex fw-bold h4 mb-0 navbar-brand text-uppercase"> <svg version="1.0" xmlns="http://www.w3.org/2000/svg" xml:space="preserve" viewBox="0 0 100 100" width="2.5em" height="2.5em" class="me-1 text-primary" fill="currentColor">
                                     <path d="M90 42.301 76.666 19.209l-13.334 7.699V10H36.667v16.908l-13.335-7.699L10 42.301 23.332 50 10 57.698l13.331 23.093 13.335-7.698V90h26.666V73.093l13.334 7.698L90 57.698 76.666 50 90 42.301zm-9.107 17.84-6.666 11.543-17.561-10.138v21.787H43.332V61.546L25.774 71.684l-6.666-11.543L36.667 50 19.108 39.863l6.666-11.549 17.558 10.14V16.667h13.334v21.787l17.561-10.14 6.666 11.549L63.332 50l17.561 10.141z"/>
                                 </svg><span>НАЗВАНИЕ</span></a> 
@@ -39,12 +39,37 @@
                                     </div> </a> 
                             </div>                             
                         </div>
-                        <div class="col-auto"> <a class="btn btn-primary" href="auth.html" role="button" style="display:none">Личный кабинет</a> 
+                        <div class="col-auto"> <a class="btn btn-primary" href="auth.html" role="button">Личный кабинет</a> 
                         </div>                         
-                    </div>
-                    <hr> 
-                    <form class="container text-primary w-25" id="loginForm" method="post">
+                    </div>                     
+                    <hr class="m-0"> 
+                    <nav class="navbar navbar-expand-lg pb-0 pt-0"> 
+                        <div class="container"> 
+                            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggler10" aria-controls="" aria-expanded="false" aria-label="Toggle navigation"> <span class="navbar-toggler-icon"></span> 
+                            </button>
+                            <div class="collapse navbar-collapse" id="navbarToggler10">
+                                <ul class="me-auto navbar-nav"> 
+                                    <li class="nav-item"> <a class="link-dark nav-link p-lg-3" href="index.html">Главная</a> 
+                                    </li>
+                                    <li class="nav-item"> <a class="link-dark nav-link p-lg-3" href="services.html">Услуги</a> 
+                                    </li>
+                                    <li class="nav-item"> 
+</li>
+                                    <li class="nav-item"> <a class="link-dark nav-link p-lg-3" href="doctors.html">Врачи</a> 
+                                    </li>
+                                    <li class="nav-item"> <a class="link-dark nav-link p-lg-3" href="about.html">О нас</a> 
+                                    </li>
+                                    <li class="nav-item"> 
+</li>
+                                </ul>
+                                <div class="d-flex flex-wrap gap-2 py-1"> <a href="#" class="btn btn-primary pe-4 ps-4">Записаться на приём</a> 
+                                </div>
+                            </div>
+                        </div>                         
+                    </nav>                     
+                    <form class="container bg-light text-primary w-50 mt-3" id="loginForm" method="post">
                         <div class="mb-3">
+                            <h3 class="bg-light fw-semibold h3 text-center text-primary">Вход в личный кабинет</h3>
                             <label for="login" class="form-label">Номер телефона
 </label>
                             <input type="text" class="form-control" id="login">
@@ -69,13 +94,8 @@
                             <button type="submit" class="btn btn-primary mb-3">Войти</button>
                         </div>
                     </form>
-                    <hr class="m-0">
                 </div>
             </div>             
-            <nav class="navbar navbar-expand-lg pb-0 pt-0"> 
-                <div class="container"> 
-</div>                 
-            </nav>             
         </header>
         <main> 
 </main>
