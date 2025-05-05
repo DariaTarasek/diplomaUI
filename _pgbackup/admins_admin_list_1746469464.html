@@ -11,8 +11,8 @@
         <!-- Custom styles for this template -->
         <link rel="stylesheet" href="blocks.css">
         <link href="style.css" rel="stylesheet">
-        <link rel="stylesheet" href="bootstrap_theme/icons.css">
         <link href="footer_style.css" rel="stylesheet">
+        <link rel="stylesheet" href="bootstrap_theme/icons.css">
         <title>Design of the Week Template 15 - Pinegrow Web Editor</title>
         <style>.tab-content > .tab-pane { display: none; } .tab-content > .active { display: block; } th, td { text-align: center; vertical-align: middle; }</style>
     </head>
@@ -81,29 +81,39 @@
         </header>
         <main> 
             <div id="app" class="container my-4">
-                <h2 class="mb-3 text-center">Список пациентов</h2>
+                <h2 class="text-center mb-3">Список администраторов</h2>
                 <div class="row mb-3">
-                    <div class="col-md-6">
-                        <input v-model="search" @input="loadPatients" class="form-control" placeholder="Поиск по ФИО или телефону">
+                    <div class="col-md-4">
+                        <input v-model="search" @input="loadStaff" class="form-control" placeholder="Поиск по ФИО или email">
+                    </div>
+                    <div class="col-md-3">
+                        <select v-model="filters.role" class="form-select">
+                            <option value="">Все должности</option>
+                            <option v-for="s in specialties" :key="s.id" :value="s.id">{{ s.name }}</option>
+                        </select>
                     </div>
                 </div>
                 <table class="table table-bordered table-hover">
                     <thead>
                         <tr>
                             <th>ФИО</th>
-                            <th>Дата рождения</th>
-                            <th>Пол</th>
-                            <th>Телефон</th>
                             <th>Email</th>
+                            <th>Телефон</th>
+                            <th>Пол</th>
+                            <th>Должность</th>
+                            <th>Действия</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="p in patients" :key="p.id" @click="onRowClick(p)" :class="{ 'table-active': isSelected(p) }" style="cursor: pointer;">
-                            <td>{{ p.second_name }} {{p.first_name}} {{p.surname}}</td>
-                            <td>{{ p.birthDate }}</td>
-                            <td>{{ p.gender }}</td>
-                            <td>{{ p.phone }}</td>
-                            <td>{{ p.email }}</td>
+                        <tr v-for="s in staff" :key="s.id" @click="onRowClick(s)" :class="{ 'table-active': isSelected(s) }" style="cursor: pointer;">
+                            <td>{{ s.second_name }} {{ s.first_name }} {{ s.surname }}</td>
+                            <td>{{ s.email }}</td>
+                            <td>{{ s.phone }}</td>
+                            <td>{{ s.gender }}</td>
+                            <td>{{ getRoleName(s.role) }}</td>
+                            <td>
+                                <button class="btn btn-sm btn-outline-primary" @click="openEdit(s)">Редактировать</button>
+                            </td>
                         </tr>
                     </tbody>
                 </table>
@@ -111,9 +121,9 @@
                 <div class="modal fade" id="editModal" tabindex="-1" @hidden.bs.modal="onModalHidden">
                     <div class="modal-dialog">
                         <div class="modal-content">
-                            <form @submit.prevent="savePatient">
+                            <form @submit.prevent="saveAdmin">
                                 <div class="modal-header">
-                                    <h5 class="modal-title">Редактирование пациента</h5>
+                                    <h5 class="modal-title">Редактирование личных данных администратора</h5>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                 </div>
                                 <div class="modal-body">
@@ -131,9 +141,15 @@
                                         <input v-model="form.surname" type="text" class="form-control" required>
                                     </div>
                                     <div class="mb-3">
-                                        <label class="form-label">Email</label>
-                                        <input v-model="form.email" type="email" class="form-control" :class="{'is-invalid': emailError}">
-                                        <div class="invalid-feedback">{{ emailError }}</div>
+                                        <label class="form-label">Новый номер телефона</label>
+                                        <input v-model="form.phone" id="phoneLogin" type="tel" placeholder="+7 (___) ___-__-__" class="form-control" :class="{'is-invalid': phoneError}" :disabled="phoneSectionDisabled">
+                                        <div class="invalid-feedback">{{ phoneError }}</div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <select v-model="form.role" name="role" id="role" required class="form-control text-primary">
+                                            <option value="admin">Администратор</option>
+                                            <option value="superadmin">Главный администратор</option>
+                                        </select>
                                     </div>
                                 </div>
                                 <div class="modal-footer">
@@ -144,7 +160,7 @@
                     </div>
                 </div>
                 <!-- Модалка выбора действия -->
-                <div class="modal fade" id="actionsModal" tabindex="-1" @hidden.bs.modal="onModalHidden">
+                <div class="modal fade" id="actionsModal" tabindex="-1" @hidden.bs.modal="onModalHidden" v-if="userRole === 'superadmin'">
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
@@ -152,9 +168,9 @@
                                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                             </div>
                             <div class="modal-body">
-                                <button class="btn btn-primary w-100 mb-2" @click="openEdit(selectedPatient)">Редактировать личные данные</button>
-                                <button class="btn btn-primary w-100 mb-2" @click="openLoginChange">Изменить логин (телефон)</button>
-                                <button v-if="userRole === 'superadmin'" class="btn btn-danger w-100 mb-2" @click="deletePatient">
+                                <button class="btn btn-primary w-100 mb-2" @click="openEdit(selectedAdmin)">Редактировать личные данные</button>
+                                <button class="btn btn-primary w-100 mb-2" @click="openLoginChange">Изменить логин</button>
+                                <button class="btn btn-danger w-100 mb-2" @click="deleteAdmin">
                                     Удалить пользователя
 </button>
                             </div>
@@ -167,34 +183,17 @@
                         <div class="modal-content">
                             <form @submit.prevent="saveLogin">
                                 <div class="modal-header">
-                                    <h5 class="modal-title">Изменение логина (телефона)</h5>
+                                    <h5 class="modal-title">Изменение логина</h5>
                                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                 </div>
                                 <div class="modal-body">
                                     <input type="hidden" v-model="form.id">
                                     <div class="mb-3">
-                                        <label class="form-label">Новый номер телефона</label>
-                                        <input v-model="form.phone" id="phoneLogin" type="tel" placeholder="+7 (___) ___-__-__" class="form-control" :class="{'is-invalid': phoneError}" :disabled="phoneSectionDisabled">
-                                        <div class="invalid-feedback">{{ phoneError }}</div>
-                                        <div class="mb-3 mt-3">
-                                            <button type="button" class="btn btn-outline-primary w-100" @click="requestCode" :disabled="requestButtonDisabled">Подтвердить номер телефона</button>
-                                        </div>
-                                        <div v-if="codeSectionVisible" class="mb-3">
-                                            <label for="smsCode" class="form-label text-primary">Код подтверждения</label>
-                                            <input type="text" id="smsCode" class="form-control" v-model="smsCode" placeholder="Введите код">
-                                            <div class="d-flex flex-wrap gap-3">
-                                                <button type="button" class="btn btn-primary mt-2 " @click="verifyCode">Подтвердить</button>
-                                                <button type="button" class="btn btn-outline-primary mt-2" :disabled="resendButtonDisabled" @click="requestCode">
-                                                    {{ resendButtonText }}
-</button>
-                                                <button type="button" class="btn btn-primary" v-if="codeSended" @click="resetPhoneConfirmation">Изменить номер</button>
-                                            </div>
-                                            <div class=" mt-2">{{ codeMessage }}</div>
-                                        </div>
-                                        <div v-if="phoneVerified" class="text-success mt-2">Телефон подтвержден!</div>
+                                        <label class="form-label">Новый email</label>
+                                        <input v-model="form.email" type="email" class="form-control" :class="{'is-invalid': emailError}">
+                                        <div class="invalid-feedback">{{ emailError }}</div>
                                     </div>
                                 </div>
-                                <script src="https://unpkg.com/imask"></script>
                                 <div class="modal-footer">
                                     <button type="submit" class="btn btn-primary">Сохранить</button>
                                 </div>
@@ -205,7 +204,7 @@
             </div>
             <!-- Vue 3 -->
             <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
-            <script src="js/admins_patient_list.js"></script>
+            <script src="js/admins_admin_list.js"></script>
         </main>
         <footer class="bg-dark text-white-50"> 
             <div class="container"> 

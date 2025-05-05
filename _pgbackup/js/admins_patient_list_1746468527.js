@@ -188,6 +188,39 @@ createApp({
             modalEdit = new bootstrap.Modal(document.getElementById('editModal'));
         }
         modalEdit.show();
+
+      
+      setTimeout(() => {
+        const phoneInput = document.getElementById('phone');
+        if (phoneInput) {
+          if (phoneInput.maskRef?.destroy) {
+            phoneInput.maskRef.destroy();
+          }
+
+          let digits = (form.phone || '').replace(/\D/g, '');
+          digits = digits.slice(1); 
+
+          const mask = IMask(phoneInput, {
+            mask: '+7 (000) 000-00-00',
+            lazy: false,
+            overwrite: true
+          });
+
+          phoneInput.maskRef = mask;
+
+          mask.on('accept', () => {
+            const digits = mask.value.replace(/\D/g, '');
+            const valid = digits.length === 11 && digits.startsWith('7');
+            phoneError.value = digits && !valid ? 'Неверный формат телефона' : '';
+            form.phone = mask.value;
+        
+          });
+
+          mask.unmaskedValue = digits;
+          form.phone = mask.value;
+          
+        }
+      }, 300);
     }
 
     function isSelected(p) {
@@ -265,6 +298,8 @@ createApp({
       });
 
       modalEdit.hide();
+      selectedPatientId.value = null;
+        selectedPatient.value = null;
       await loadPatients();
     }
 

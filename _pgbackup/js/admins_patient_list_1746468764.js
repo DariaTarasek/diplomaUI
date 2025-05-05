@@ -265,6 +265,8 @@ createApp({
       });
 
       modalEdit.hide();
+      selectedPatientId.value = null;
+        selectedPatient.value = null;
       await loadPatients();
     }
 
