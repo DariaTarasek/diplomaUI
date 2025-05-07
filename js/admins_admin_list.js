@@ -85,19 +85,21 @@ createApp({
 
 
   function openEdit(s) {
-    if (userRole.value !== 'superadmin') return;
-    isSwitchingModals.value = true;
-    modalChoice?.hide();
-    Object.assign(form, s);
-    emailError.value = '';
-    phoneError.value = '';
-    if (!modalEdit) {
-        modalEdit = new bootstrap.Modal(document.getElementById('editModal'));
-    }
+        if (userRole.value !== 'superadmin') return;
+        isSwitchingModals.value = true;
+        modalChoice?.hide();
+        Object.assign(form, s);
+        
+         form.gender = s.gender === 'Мужской' ? 'male' : 'female';
+        emailError.value = '';
+        phoneError.value = '';
+        if (!modalEdit) {
+            modalEdit = new bootstrap.Modal(document.getElementById('editModal'));
+        }
     modalEdit.show();
 
     setTimeout(() => {
-        const phoneInput = document.getElementById('phone');
+        const phoneInput = document.getElementById('phoneLogin');
         if (phoneInput) {
         // Удаляем старую маску, если была
         if (phoneInput.maskRef?.destroy) {

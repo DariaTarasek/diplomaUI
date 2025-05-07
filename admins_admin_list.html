@@ -125,24 +125,33 @@
                                 <div class="modal-body">
                                     <input type="hidden" v-model="form.id">
                                     <div class="mb-3">
-                                        <label class="form-label">Фамилия</label>
+                                        <label class="form-label">Фамилия*</label>
                                         <input v-model="form.second_name" type="text" class="form-control" required>
                                     </div>
                                     <div class="mb-3">
-                                        <label class="form-label">Имя</label>
+                                        <label class="form-label">Имя*</label>
                                         <input v-model="form.first_name" type="text" class="form-control" required>
                                     </div>
                                     <div class="mb-3">
                                         <label class="form-label">Отчество</label>
-                                        <input v-model="form.surname" type="text" class="form-control" required>
+                                        <input v-model="form.surname" type="text" class="form-control">
                                     </div>
                                     <div class="mb-3">
-                                        <label class="form-label">Новый номер телефона</label>
+                                        <label class="form-label">Пол*</label>
+                                        <select v-model="form.gender" name="gender" id="gender" required class="form-control">
+                                            <option value="male">Мужской</option>
+                                            <option value="female">Женский</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Номер телефона*</label>
                                         <input v-model="form.phone" id="phoneLogin" type="tel" placeholder="+7 (___) ___-__-__" class="form-control" :class="{'is-invalid': phoneError}" :disabled="phoneSectionDisabled">
                                         <div class="invalid-feedback">{{ phoneError }}</div>
+                                        <script src="https://unpkg.com/imask"></script>
                                     </div>
                                     <div class="mb-3">
-                                        <select v-model="form.role" name="role" id="role" required class="form-control text-primary">
+                                        <label class="form-label">Должность*</label>
+                                        <select v-model="form.role" name="role" id="role" required class="form-select text-primary">
                                             <option value="admin">Администратор</option>
                                             <option value="superadmin">Главный администратор</option>
                                         </select>

@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Проверка силы пароля
   function validatePassword() {
-    const isValid = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/.test(password.value);
+    const isValid = /^(?=.*[a-zA-Z])(?=.*\d).{8,}$/.test(password.value);
     if (!isValid) {
         password.classList.add('is-invalid');
         passwordError.textContent = 'Пароль должен быть не менее 8 символов и содержать латинские буквы и цифры.';

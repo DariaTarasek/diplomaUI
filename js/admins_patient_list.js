@@ -41,6 +41,14 @@ createApp({
 
     const userRole = ref(null);
 
+    function formatDate(dateStr) {
+        if (!dateStr) return '';
+        const parts = dateStr.split('.');
+        if (parts.length !== 3) return '';
+        const [day, month, year] = parts;
+        return `${day.padStart(2, '0')}.${month.padStart(2, '0')}.${year}`;
+        }
+
     async function fetchUserRole() {
         try {
             const res = await fetch('http://192.168.1.207:8080/api/user-role'); 
@@ -183,6 +191,21 @@ createApp({
         modalChoice?.hide();
 
         Object.assign(form, selectedPatient.value); // копируем данные пациента
+
+         form.gender = selectedPatient.value.gender === 'Мужской' ? 'male' : 'female';
+         console.log(selectedPatient.value.birthDate);
+
+         //  Преобразование даты из ДД.ММ.ГГГГ в ГГГГ-MM-ДД
+        if (selectedPatient.value.birthDate) {
+            const parts = selectedPatient.value.birthDate.split('.');
+            if (parts.length === 3) {
+                const [day, month, year] = parts;
+                form.birthDate = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+            } else {
+                form.birthDate = '';
+            }
+        }
+
 
         if (!modalEdit) {
             modalEdit = new bootstrap.Modal(document.getElementById('editModal'));
@@ -359,22 +382,23 @@ onMounted(async () => {
       selectedPatientId,
       isSelected,
       onModalHidden,
-       phoneVerified,
-        verifiedPhoneNumber,
-        smsCode,
-        codeMessage,
-        codeSectionVisible,
-        resendButtonDisabled,
-        resendButtonText,
-        requestCode,
-        verifyCode,
-        resetPhoneConfirmation,
-        requestButtonDisabled,
-        phoneSectionDisabled,
-        codeSended,
-        userRole,
-        fetchUserRole,
-        deletePatient
+      formatDate,
+      phoneVerified,
+      verifiedPhoneNumber,
+      smsCode,
+      codeMessage,
+      codeSectionVisible,
+      resendButtonDisabled,
+      resendButtonText,
+      requestCode,
+      verifyCode,
+      resetPhoneConfirmation,
+      requestButtonDisabled,
+      phoneSectionDisabled,
+      codeSended,
+      userRole,
+      fetchUserRole,
+      deletePatient
     };
   }
 }).mount('#app');
