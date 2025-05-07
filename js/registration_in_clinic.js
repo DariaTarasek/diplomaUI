@@ -3,6 +3,11 @@ document.addEventListener("DOMContentLoaded", function () {
   const email = form.email;
   const emailError = document.getElementById('emailError');
 
+  const firstName = form.firstName;
+  const secondName = form.secondName;
+  const firstNameError = document.getElementById('firstNameError');
+  const secondNameError = document.getElementById('secondNameError');
+
   // Проверка даты 
   const dateInput = document.getElementById("birthDate");
   if (dateInput) {
@@ -210,13 +215,39 @@ document.addEventListener("DOMContentLoaded", function () {
     requestCodeBtn.disabled = false;
   });
 
+  firstName.addEventListener('input', () => {
+    if (firstName.value.trim().length === 0) {
+        firstNameError.textContent = 'Имя не может быть пустым';
+         firstName.classList.add('is-invalid');
+     } else {
+        firstNameError.textContent = '';
+        firstName.classList.remove('is-invalid');
+        }
+  });
+
+  secondName.addEventListener('input', () => {
+    if (secondName.value.trim().length === 0) {
+        secondNameError.textContent = 'Фамилия не может быть пустой';
+         secondName.classList.add('is-invalid');
+     } else {
+        secondNameError.textContent = '';
+        secondName.classList.remove('is-invalid');
+        }
+  });
+
   form.addEventListener('submit', function (event) {
     event.preventDefault();
+
+    const isFirstNameValid = firstName.value.trim().length > 0;
+    const isSecondNameValid = secondName.value.trim().length > 0;
+
     validateEmail();
 
     if (emailError.textContent) {
       return;
     }
+
+    if (!isFirstNameValid || !isSecondNameValid) return;
 
     if (!phoneVerified) {
       alert('Подтвердите номер телефона перед регистрацией.');

@@ -114,7 +114,7 @@
                         <tr v-for="s in staff" :key="s.id" @click="onRowClick(s)" :class="{ 'table-active': isSelected(s) }" style="cursor: pointer;">
                             <td>{{ s.second_name }} {{ s.first_name }} {{ s.surname }}</td>
                             <td>{{ s.email }}</td>
-                            <td>{{ s.phone }}</td>
+                            <td>{{ formatPhone(s.phone) }}</td>
                             <td>{{ s.gender }}</td>
                             <td>{{ getSpecialtyNames(s.specialty) }}</td>
                             <td>{{ s.education }}</td>
@@ -136,12 +136,14 @@
                                     <div class="mb-3">
                                         <label class="form-label">Фамилия</label>
                                         <span style="color:red;">*</span>
-                                        <input v-model="form.second_name" type="text" class="form-control" maxlength="256" required>
+                                        <input v-model="form.second_name" type="text" class="form-control" maxlength="256" :class="{'is-invalid': secondNameError}" required>
+                                        <div class="invalid-feedback">{{ secondNameError }}</div>
                                     </div>
                                     <div class="mb-3">
                                         <label class="form-label">Имя</label>
                                         <span style="color:red;">*</span>
-                                        <input v-model="form.first_name" type="text" class="form-control" maxlength="256" required>
+                                        <input v-model="form.first_name" type="text" class="form-control" maxlength="256" :class="{'is-invalid': firstNameError}" required>
+                                        <div class="invalid-feedback">{{ firstNameError }}</div>
                                     </div>
                                     <div class="mb-3">
                                         <label class="form-label">Отчество</label>
@@ -162,7 +164,7 @@
                                         <div class="invalid-feedback">{{ phoneError }}</div>
                                     </div>
                                     <div class="mb-3">
-                                        <label class="form-label d-block">Специальность<span style="color:red;">*</span>
+                                        <label class="form-label d-block">Специализация<span style="color:red;">*</span>
                                         </label>
                                         <div class="border rounded p-2" style="max-height: 160px; overflow-y: auto;" :class="{'is-invalid': specError}">
                                             <div v-for="s in specialties" :key="s.id" class="form-check">

@@ -26,6 +26,9 @@ createApp({
     const selectedPatientId = ref(null);
     const isSwitchingModals = ref(false);
 
+     const firstNameError = ref('');
+    const secondNameError = ref('');
+
     const phoneVerified = ref(false);
     const verifiedPhoneNumber = ref('');
     const smsCode = ref('');
@@ -48,6 +51,19 @@ createApp({
         const [day, month, year] = parts;
         return `${day.padStart(2, '0')}.${month.padStart(2, '0')}.${year}`;
         }
+
+       function formatPhone(phone) {
+            const digits = phone.replace(/\D/g, '');
+            if (digits.length !== 11 || (!digits.startsWith('7') && !digits.startsWith('8'))) return phone;
+
+            const code = digits.slice(1, 4);
+            const part1 = digits.slice(4, 7);
+            const part2 = digits.slice(7, 9);
+            const part3 = digits.slice(9, 11);
+
+            return `+7 (${code}) ${part1}-${part2}-${part3}`;
+            }
+
 
     async function fetchUserRole() {
         try {
@@ -343,6 +359,16 @@ createApp({
       emailError.value = val && !emailRegex.test(val) ? 'Неверный формат email' : '';
     });
 
+    watch(() => form.first_name, (val) => {
+        if (val.trim().length === 0) firstNameError.value = 'Имя не может быть пустым'
+        else firstNameError.value = '';
+    });
+
+    watch(() => form.second_name, (val) => {
+        if (val.trim().length === 0) secondNameError.value = 'Фамилия не может быть пустой'
+        else secondNameError.value = '';
+    });
+
     onMounted(() => {
   const editEl = document.getElementById('editModal');
   const loginEl = document.getElementById('changeLoginModal');
@@ -372,6 +398,7 @@ onMounted(async () => {
       form,
       phoneError,
       emailError,
+      formatPhone,
       loadPatients,
       onRowClick,
       openEdit,
@@ -398,7 +425,9 @@ onMounted(async () => {
       codeSended,
       userRole,
       fetchUserRole,
-      deletePatient
+      deletePatient, 
+      firstNameError,
+      secondNameError
     };
   }
 }).mount('#app');

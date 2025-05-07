@@ -7,6 +7,11 @@ document.addEventListener("DOMContentLoaded", async () => {
   const patientForm = document.getElementById("patientForm");
   const userButton = document.getElementById("userButton");
 
+  const firstName = document.getElementById('firstName');
+  const secondName = document.getElementById('secondName');
+  const firstNameError = document.getElementById('firstNameError');
+  const secondNameError = document.getElementById('secondNameError');
+
   let selectedDoctorId = null;
   let selectedSlot = null;
   let selectedSpecialization = null;
@@ -23,7 +28,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const dd = String(today.getDate()).padStart(2, "0");
 
     const minDate = `${yyyy - 110}-${mm}-${dd}`;
-    const maxDate = `${yyyy - 18}-${mm}-${dd - 1}`;
+    const maxDate = `${yyyy - 18}-${mm}-${String(today.getDate() - 1).padStart(2, "0")}`;
     dateInput.min = minDate;
     dateInput.max = maxDate;
   }
@@ -39,11 +44,11 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (digits.length !== 11) {
             phoneInput.classList.add('is-invalid');
             phoneError.textContent = 'Введите полный 11-значный номер телефона.';
-            return
+            return;
         } else {
             phoneInput.classList.remove('is-invalid');
             phoneError.textContent = '';
-           return
+           return;
         }
     };
 
@@ -165,11 +170,36 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   }
 
+  firstName.addEventListener('input', () => {
+    if (firstName.value.trim().length === 0) {
+        firstNameError.textContent = 'Имя не может быть пустым';
+         firstName.classList.add('is-invalid');
+     } else {
+        firstNameError.textContent = '';
+        firstName.classList.remove('is-invalid');
+        }
+  });
+
+  secondName.addEventListener('input', () => {
+    if (secondName.value.trim().length === 0) {
+        secondNameError.textContent = 'Фамилия не может быть пустой';
+         secondName.classList.add('is-invalid');
+     } else {
+        secondNameError.textContent = '';
+        secondName.classList.remove('is-invalid');
+        }
+  });
+
   // Отправка формы
   patientForm.addEventListener("submit", async (e) => {
     e.preventDefault();
 
     if (!selectedSlot || !selectedDoctorId) return alert("Выберите врача и время");
+    if (phoneError.textContent) return;
+
+    const isFirstNameValid = firstName.value.trim().length > 0;
+    const isSecondNameValid = secondName.value.trim().length > 0;
+    if (!isFirstNameValid || !isSecondNameValid) return;
 
     const payload = {
       doctor_id: selectedDoctorId,

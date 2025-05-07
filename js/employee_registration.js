@@ -9,6 +9,11 @@ document.addEventListener("DOMContentLoaded", function () {
   const emailError = document.getElementById('emailError');
   const specError = document.getElementById('specError');
 
+  const firstName = form.firstName;
+  const secondName = form.secondName;
+  const firstNameError = document.getElementById('firstNameError');
+  const secondNameError = document.getElementById('secondNameError');
+
   const roleSelect = document.getElementById('role');
   const doctorFields = document.getElementById('doctorFields');
 
@@ -129,8 +134,31 @@ document.addEventListener("DOMContentLoaded", function () {
   passwordCheck.addEventListener('input', validatePasswordMatch);
   email.addEventListener('input', validateEmail);
 
+  firstName.addEventListener('input', () => {
+    if (firstName.value.trim().length === 0) {
+        firstNameError.textContent = 'Имя не может быть пустым';
+         firstName.classList.add('is-invalid');
+     } else {
+        firstNameError.textContent = '';
+        firstName.classList.remove('is-invalid');
+        }
+  });
+
+  secondName.addEventListener('input', () => {
+    if (secondName.value.trim().length === 0) {
+        secondNameError.textContent = 'Фамилия не может быть пустой';
+         secondName.classList.add('is-invalid');
+     } else {
+        secondNameError.textContent = '';
+        secondName.classList.remove('is-invalid');
+        }
+  });
+
   form.addEventListener('submit', function (event) {
     event.preventDefault();
+
+    const isFirstNameValid = firstName.value.trim().length > 0;
+    const isSecondNameValid = secondName.value.trim().length > 0;
 
     validatePassword();
     validatePasswordMatch();
@@ -141,7 +169,9 @@ document.addEventListener("DOMContentLoaded", function () {
       passwordError.textContent ||
       passwordCheckError.textContent ||
       emailError.textContent || 
-      phoneError.textContent
+      phoneError.textContent || 
+      !isFirstNameValid ||
+      !isSecondNameValid
     ) {
       return;
     }

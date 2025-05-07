@@ -105,7 +105,7 @@
                             <td>{{ p.second_name }} {{p.first_name}} {{p.surname}}</td>
                             <td>{{ formatDate(p.birthDate) }}</td>
                             <td>{{ p.gender }}</td>
-                            <td>{{ p.phone }}</td>
+                            <td>{{ formatPhone(p.phone) }}</td>
                             <td>{{ p.email }}</td>
                         </tr>
                     </tbody>
@@ -122,23 +122,29 @@
                                 <div class="modal-body">
                                     <input type="hidden" v-model="form.id">
                                     <div class="mb-3">
-                                        <label class="form-label">Фамилия*</label>
-                                        <input v-model="form.second_name" type="text" class="form-control" required>
+                                        <label class="form-label">Фамилия<span style="color:red;">*</span>
+                                        </label>
+                                        <input v-model="form.second_name" type="text" class="form-control" maxlength="256" :class="{'is-invalid': secondNameError}" required>
+                                        <div class="invalid-feedback">{{ secondNameError }}</div>
                                     </div>
                                     <div class="mb-3">
-                                        <label class="form-label">Имя*</label>
-                                        <input v-model="form.first_name" type="text" class="form-control" required>
+                                        <label class="form-label">Имя<span style="color:red;">*</span>
+                                        </label>
+                                        <input v-model="form.first_name" type="text" class="form-control" maxlength="256" :class="{'is-invalid': firstNameError}" required>
+                                        <div class="invalid-feedback">{{ firstNameError }}</div>
                                     </div>
                                     <div class="mb-3">
                                         <label class="form-label">Отчество</label>
                                         <input v-model="form.surname" type="text" class="form-control">
                                     </div>
                                     <div class="mb-3">
-                                        <label class="form-label">Дата рождения*</label>
+                                        <label class="form-label">Дата рождения<span style="color:red;">*</span>
+                                        </label>
                                         <input v-model="form.birthDate" type="date" class="form-control" required>
                                     </div>
                                     <div class="mb-3">
-                                        <label class="form-label">Пол*</label>
+                                        <label class="form-label">Пол<span style="color:red;">*</span>
+                                        </label>
                                         <select v-model="form.gender" name="gender" id="gender" required class="form-control">
                                             <option value="male">Мужской</option>
                                             <option value="female">Женский</option>
@@ -187,7 +193,8 @@
                                 <div class="modal-body">
                                     <input type="hidden" v-model="form.id">
                                     <div class="mb-3">
-                                        <label class="form-label">Новый номер телефона</label>
+                                        <label class="form-label">Новый номер телефона<span style="color:red;">*</span>
+                                        </label>
                                         <input v-model="form.phone" id="phoneLogin" type="tel" placeholder="+7 (___) ___-__-__" class="form-control" :class="{'is-invalid': phoneError}" :disabled="phoneSectionDisabled">
                                         <div class="invalid-feedback">{{ phoneError }}</div>
                                         <div class="mb-3 mt-3">

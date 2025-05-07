@@ -8,6 +8,11 @@ document.addEventListener("DOMContentLoaded", function () {
   const passwordCheckError = document.getElementById('passwordCheckError');
   const emailError = document.getElementById('emailError');
 
+  const firstName = form.firstName;
+  const secondName = form.secondName;
+  const firstNameError = document.getElementById('firstNameError');
+  const secondNameError = document.getElementById('secondNameError');
+
   // Проверка даты 
   const dateInput = document.getElementById("birthDate");
   if (dateInput) {
@@ -17,7 +22,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const dd = String(today.getDate()).padStart(2, "0");
 
     const minDate = `${yyyy - 110}-${mm}-${dd}`;
-    const maxDate = `${yyyy - 18}-${mm}-${dd - 1}`;
+    const maxDate = `${yyyy - 18}-${mm}-${String(today.getDate() - 1).padStart(2, "0")}`;
     dateInput.min = minDate;
     dateInput.max = maxDate;
   }
@@ -73,6 +78,28 @@ document.addEventListener("DOMContentLoaded", function () {
 
   passwordCheck.addEventListener('input', validatePasswordMatch);
   email.addEventListener('input', validateEmail);
+
+  firstName.addEventListener('input', () => {
+    if (firstName.value.trim().length === 0) {
+        firstNameError.textContent = 'Имя не может быть пустым';
+         firstName.classList.add('is-invalid');
+     } else {
+        firstNameError.textContent = '';
+        firstName.classList.remove('is-invalid');
+        }
+  });
+
+  secondName.addEventListener('input', () => {
+    if (secondName.value.trim().length === 0) {
+        secondNameError.textContent = 'Фамилия не может быть пустой';
+         secondName.classList.add('is-invalid');
+     } else {
+        secondNameError.textContent = '';
+        secondName.classList.remove('is-invalid');
+        }
+  });
+
+  
 
 // Валидация номера телефона
     const phoneInput = document.getElementById('phone');
@@ -259,6 +286,10 @@ document.addEventListener("DOMContentLoaded", function () {
   form.addEventListener('submit', function (event) {
     event.preventDefault();
 
+    const isFirstNameValid = firstName.value.trim().length > 0;
+    const isSecondNameValid = secondName.value.trim().length > 0;
+
+
     validatePassword();
     validatePasswordMatch();
     validateEmail();
@@ -266,7 +297,9 @@ document.addEventListener("DOMContentLoaded", function () {
     if (
       passwordError.textContent ||
       passwordCheckError.textContent ||
-      emailError.textContent
+      emailError.textContent || 
+      !isFirstNameValid ||
+      !isSecondNameValid
     ) {
       return;
     }

@@ -25,6 +25,9 @@ createApp({
     const selectedAdmin = ref(null);
     const selectedAdminId = ref(null);
 
+    const firstNameError = ref('');
+    const secondNameError = ref('');
+
     const isSwitchingModals = ref(false);
 
     let modalEdit = null;
@@ -61,6 +64,18 @@ createApp({
       const res = await fetch(`http://192.168.1.207:8080/api/staff?${params}`);
       staff.value = await res.json();
     }
+
+    function formatPhone(phone) {
+            const digits = phone.replace(/\D/g, '');
+            if (digits.length !== 11 || (!digits.startsWith('7') && !digits.startsWith('8'))) return phone;
+
+            const code = digits.slice(1, 4);
+            const part1 = digits.slice(4, 7);
+            const part2 = digits.slice(7, 9);
+            const part3 = digits.slice(9, 11);
+
+            return `+7 (${code}) ${part1}-${part2}-${part3}`;
+            }
 
     function getRoleName(id) {
       return roles.value.find(r => r.id === id)?.name || id;
@@ -248,6 +263,16 @@ createApp({
       emailError.value = val && !emailRegex.test(val) ? 'Неверный формат email' : '';
     });
 
+      watch(() => form.first_name, (val) => {
+        if (val.trim().length === 0) firstNameError.value = 'Имя не может быть пустым'
+        else firstNameError.value = '';
+    });
+
+    watch(() => form.second_name, (val) => {
+        if (val.trim().length === 0) secondNameError.value = 'Фамилия не может быть пустой'
+        else secondNameError.value = '';
+    });
+
     onMounted(() => {
         const editEl = document.getElementById('editModal');
         const loginEl = document.getElementById('changeLoginModal');
@@ -293,7 +318,10 @@ createApp({
       selectedAdminId,
       isSelected,
       onModalHidden,
-      deleteAdmin
+      deleteAdmin,
+      formatPhone,
+      firstNameError,
+      secondNameError
     };
   }
 }).mount('#app');
