@@ -1,0 +1,226 @@
+const { createApp } = Vue;
+
+createApp({
+  data() {
+    return {
+      activeTab: 'services',
+      tabs: [
+        { id: 'services', label: 'Услуги' },
+        { id: 'materials', label: 'Материалы' }
+      ],
+      services: [],
+      materials: [],
+      searchQuery: '',
+      selectedCategory: '',
+      serviceCategories: [],
+      isPopoverVisible: false,
+      first_name: '',
+      second_name: '', 
+      selectedService: null,
+      hoveredServiceId: null,
+      isEditingService: false,
+      editedServicePrice: 0,
+      selectedMaterial: null,
+      hoveredMaterialId: null,
+      isEditingMaterial: false,
+      editedMaterialPrice: 0,
+      newItem: {
+        name: '',
+        category_id: '',
+        price: 0
+      },
+        addError: ''
+    };
+  },
+
+  computed: {
+    fullName() {
+      return [this.first_name, this.second_name].filter(Boolean).join(' ');
+    }
+  },
+
+  methods: {
+    async fetchData() {
+      try {
+        const userRes = await fetch('http://192.168.1.207:8080/api/admin-data');
+        const userData = await userRes.json();
+        this.first_name = userData.first_name || '';
+        this.second_name = userData.second_name || '';
+
+        await this.fetchServices();
+        await this.fetchMaterials();
+      } catch (err) {
+        console.error('Ошибка при загрузке данных:', err);
+      }
+    },
+
+    async fetchServices() {
+      try {
+        const params = new URLSearchParams();
+        if (this.searchQuery) params.append('search', this.searchQuery);
+        if (this.selectedCategory) params.append('category', this.selectedCategory);
+
+        const res = await fetch(`http://192.168.1.207:8080/api/services?${params}`);
+        const data = await res.json();
+
+        this.services = data.services || [];
+      } catch (err) {
+        console.error('Ошибка при загрузке услуг:', err);
+      }
+    },
+
+    async fetchMaterials() {
+      try {
+        const params = new URLSearchParams();
+        if (this.searchQuery) params.append('search', this.searchQuery);
+
+        const res = await fetch(`http://192.168.1.207:8080/api/materials?${params}`);
+        const data = await res.json();
+
+        this.materials = data.materials || [];
+      } catch (err) {
+        console.error('Ошибка при загрузке материалов:', err);
+      }
+    },
+
+    async fetchServiceCategories() {
+        try {
+            const res = await fetch('http://192.168.1.207:8080/api/service-categories');
+            const data = await res.json();
+            this.serviceCategories = data.categories || [];
+        } catch (err) {
+            console.error('Ошибка при загрузке категорий:', err);
+        }
+        },
+
+    async onSearchOrFilterChange() {
+      if (this.activeTab === 'services') {
+        await this.fetchServices();
+      } else if (this.activeTab === 'materials') {
+        await this.fetchMaterials();
+      }
+    },
+
+     openServiceModal(service) {
+        this.selectedService = { ...service };
+  },
+
+    openMaterialModal(material) {
+         this.selectedMaterial = { ...material };
+  },
+
+  closeServiceModal() {
+    this.selectedService = null;
+    this.isEditingService = false;
+  },
+
+   closeMaterialModal() {
+    this.selectedMaterial = null;
+    this.isEditingMaterial = false;
+  },
+
+  startEditingService() {
+    this.editedServicePrice = this.selectedService.price;
+    this.isEditingService = true;
+  },
+
+  startEditingMaterial() {
+    this.editedMaterialPrice = this.selectedMaterial.price;
+    this.isEditingMaterial = true;
+  },
+
+  async saveServicePrice() {
+    try {
+      const res = await fetch(`http://192.168.1.207:8080/api/services/${this.selectedService.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ price: this.editedServicePrice })
+      });
+
+      if (!res.ok) throw new Error('Ошибка при обновлении');
+
+      this.isEditingService = false;
+      this.closeServiceModal();
+      await this.fetchServices();
+    } catch (err) {
+      alert('Не удалось сохранить изменения.');
+    }
+  },
+
+   async saveMaterialPrice() {
+    try {
+      const res = await fetch(`http://192.168.1.207:8080/api/materials/${this.selectedMaterial.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ price: this.editedMaterialPrice })
+      });
+
+      if (!res.ok) throw new Error('Ошибка при обновлении');
+
+      this.isEditingMaterial = false;
+      this.closeMaterialModal();
+      await this.fetchMaterials();
+    } catch (err) {
+      alert('Не удалось сохранить изменения.');
+    }
+  },
+
+  async confirmServiceDelete() {
+    if (!confirm(`Удалить услугу "${this.selectedService.name}"?`)) return;
+
+    try {
+      const res = await fetch(`http://192.168.1.207:8080/api/services/${this.selectedService.id}`, {
+        method: 'DELETE'
+      });
+
+      if (!res.ok) throw new Error('Ошибка при удалении');
+
+      this.closeServiceModal();
+      await this.fetchServices();
+    } catch (err) {
+      alert('Не удалось удалить услугу.');
+    }
+  },
+
+  async confirmMaterialDelete() {
+    if (!confirm(`Удалить расходный материал "${this.selectedMaterial.name}"?`)) return;
+
+    try {
+      const res = await fetch(`http://192.168.1.207:8080/api/materials/${this.selectedMaterial.id}`, {
+        method: 'DELETE'
+      });
+
+      if (!res.ok) throw new Error('Ошибка при удалении');
+
+      this.closeMaterialModal();
+      await this.fetchMaterials();
+    } catch (err) {
+      alert('Не удалось удалить расходный материал.');
+    }
+  },
+
+
+    togglePopover() {
+      this.isPopoverVisible = !this.isPopoverVisible;
+    },
+
+    handleClickOutside(event) {
+      const popover = document.getElementById('admin-profile');
+      if (popover && !popover.contains(event.target)) {
+        this.isPopoverVisible = false;
+      }
+    }
+  },
+
+ watch: {
+        activeTab: 'fetchData',
+        searchQuery: 'fetchData',
+        selectedCategory: 'fetchData'
+    },
+
+  mounted() {
+    this.fetchData();
+    this.fetchServiceCategories();
+    document.addEventListener('click', this.handleClickOutside);
+  }
+}).mount('#app');

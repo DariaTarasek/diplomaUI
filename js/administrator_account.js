@@ -4,17 +4,19 @@ createApp({
   data() {
   return {
     activeTab: 'schedule',
-    adminName: '',
+    second_name: '',
+    first_name: '',
     tabs: [
       { id: 'schedule', label: 'Расписание приёмов' },
       { id: 'pending', label: 'Неподтверждённые записи' }
     ],
     schedule: {
-      days: ['Пн', 'Вт', 'Ср', 'Чт', 'Пт'],
-      timeSlots: ['09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00']
+      days: [],
+      timeSlots: []
     },
     appointments: {},
     pending: [],
+       isPopoverVisible: false,
   };
 },
   methods: {
@@ -25,24 +27,54 @@ createApp({
 
     this.appointments = data.appointments || {};
     this.pending = data.pending || [];
-    this.adminName = data.admin_name || '-';
+    this.first_name = data.first_name || '';
+    this.second_name = data.second_name || '';
 
-     const nameButton = document.getElementById('admin_name');
-          if (nameButton) {
-            nameButton.textContent = this.adminName;
-          }
+    // Получение расписания
+    const scheduleRes = await fetch('http://192.168.1.207:8080/api/schedule-admin');
+    const scheduleData = await scheduleRes.json();
+
+    this.schedule = {
+      days: scheduleData.days || [],
+      timeSlots: scheduleData.timeSlots || []
+    };
+
 
   } catch (err) {
     console.error('Ошибка при загрузке данных:', err);
   }
 },
+
     confirmEntry(index) {
       const entry = this.pending[index];
       // Логика подтверждения
       this.pending.splice(index, 1);
-    }
+    },
+
+ togglePopover() {
+            this.isPopoverVisible = !this.isPopoverVisible;
+        },
+        handleClickOutside(event) {
+            const popover = document.getElementById('admin-profile');
+            if (popover && !popover.contains(event.target)) {
+                this.isPopoverVisible = false;
+            }
+        },
   },
+
+
+  computed: {
+        fullName() {
+            return [
+                this.first_name,
+                this.second_name,
+            ]
+            .filter(Boolean)
+            .join(' ');
+        }
+    },
   mounted() {
     this.fetchData();
+     document.addEventListener('click', this.handleClickOutside);
   }
 }).mount('#app');

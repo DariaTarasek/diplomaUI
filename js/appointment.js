@@ -1,272 +1,243 @@
-document.addEventListener("DOMContentLoaded", async () => {
-  const specialtySelect = document.getElementById("specialtySelect");
-  const doctorSelect = document.getElementById("doctorSelect");
-  const scheduleContainer = document.getElementById("scheduleContainer");
-  const scheduleHead = document.getElementById("scheduleHead");
-  const scheduleBody = document.getElementById("scheduleBody");
-  const patientForm = document.getElementById("patientForm");
-  const userButton = document.getElementById("userButton");
+const { createApp, ref, reactive, onMounted, computed, watch, nextTick } = Vue;
 
-  const firstName = document.getElementById('firstName');
-  const secondName = document.getElementById('secondName');
-  const firstNameError = document.getElementById('firstNameError');
-  const secondNameError = document.getElementById('secondNameError');
+createApp({
+  setup() {
+    const specialties = ref([]);
+    const doctors = ref([]);
+    const schedule = ref({});
+    const maxSlots = ref(0);
+    const selectedDoctorId = ref(null);
+    const selectedSpecialization = ref(null);
+    const selectedDoctor = ref(null);
+    const selectedSlot = ref(null);
+    const step = ref(1);
 
-  let selectedDoctorId = null;
-  let selectedSlot = null;
-  let selectedSpecialization = null;
-  let selectedDoctor = null;
+    const authFirstName = ref("");
+    const authSecondName = ref("");
 
-  loadPatientData();
+    const isPopoverVisible = ref(false)
 
-  // Проверка даты 
-  const dateInput = document.getElementById("birthDate");
-  if (dateInput) {
-    const today = new Date();
-    const yyyy = today.getFullYear();
-    const mm = String(today.getMonth() + 1).padStart(2, "0");
-    const dd = String(today.getDate()).padStart(2, "0");
+    const isAuthorized = ref(false)
 
-    const minDate = `${yyyy - 110}-${mm}-${dd}`;
-    const maxDate = `${yyyy - 18}-${mm}-${String(today.getDate() - 1).padStart(2, "0")}`;
-    dateInput.min = minDate;
-    dateInput.max = maxDate;
-  }
+    const patient = reactive({
+      second_name: '',
+      first_name: '',
+      surname: '',
+      birth_date: '',
+      gender: '',
+      phone: ''
+    });
 
-  // Валидация номера телефона
-    const phoneInput = document.getElementById('phone');
-    const phoneError = document.getElementById('phoneError');
+    const errors = reactive({
+      phone: '',
+      first_name: '',
+      second_name: ''
+    });
 
-    
     const validatePhone = () => {
-        const digits = phoneInput.value.replace(/\D/g, '');
-
-        if (digits.length !== 11) {
-            phoneInput.classList.add('is-invalid');
-            phoneError.textContent = 'Введите полный 11-значный номер телефона.';
-            return;
-        } else {
-            phoneInput.classList.remove('is-invalid');
-            phoneError.textContent = '';
-           return;
-        }
-    };
-
-    phoneInput.addEventListener('input', validatePhone);
-
-  // Загрузка специализаций
-  async function loadSpecialties() {
-    const response = await fetch("http://192.168.1.207:8080/api/specialties");
-    const specialties = await response.json();
-
-    specialties.forEach(spec => {
-      const option = document.createElement("option");
-      option.value = spec.id;
-      option.textContent = spec.name;
-      specialtySelect.appendChild(option);
-    });
-  }
-
-  // Загрузка врачей
-  async function loadDoctors(specialtyId) {
-    const response = await fetch(`http://192.168.1.207:8080/api/doctors?specialty=${specialtyId}`);
-    const doctors = await response.json();
-
-    doctorSelect.innerHTML = '<option selected disabled>Выберите врача</option>';
-    doctorSelect.disabled = false;
-
-    doctors.forEach(doc => {
-      const option = document.createElement("option");
-      option.value = doc.id;
-      option.textContent = `${doc.last_name} ${doc.first_name}`;
-      doctorSelect.appendChild(option);
-    });
-  }
-
-  // Загрузка расписания
-  async function loadSchedule(doctorId) {
-    const response = await fetch(`http://192.168.1.207:8080/api/schedule?doctor_id=${doctorId}`);
-    const schedule = await response.json(); 
-
-    scheduleHead.innerHTML = "";
-    scheduleBody.innerHTML = "";
-    const dates = Object.keys(schedule);
-
-    const headRow = document.createElement("tr");
-    dates.forEach(date => {
-      const th = document.createElement("th");
-      const day = new Date(date).toLocaleDateString('ru-RU', { weekday: 'short', day: 'numeric', month: 'short' });
-      th.textContent = day;
-      headRow.appendChild(th);
-    });
-    scheduleHead.appendChild(headRow);
-
-    // Макс кол-во слотов (строк) в день
-    const maxSlots = Math.max(...dates.map(d => schedule[d].length));
-    for (let i = 0; i < maxSlots; i++) {
-      const tr = document.createElement("tr");
-      dates.forEach(date => {
-        const times = schedule[date];
-        const td = document.createElement("td");
-
-        if (times[i]) {
-          const btn = document.createElement("button");
-          btn.className = "btn btn-outline-primary btn-sm";
-          btn.textContent = times[i];
-          btn.onclick = () => selectSlot(`${date}T${times[i]}`);
-          td.appendChild(btn);
-        }
-
-        tr.appendChild(td);
-      });
-      scheduleBody.appendChild(tr);
-    }
-
-    scheduleContainer.classList.remove("d-none");
-  }
-
-  // Выбор времени
-  function selectSlot(slot) {
-    selectedSlot = slot;
-    showPatientForm();
-    // patientForm.classList.remove("d-none");
-    //loadPatientData(); // попробовать подтянуть личные данные
-  }
-
-    function showPatientForm() {
-    document.getElementById("step-1").style.display = "none";
-    document.getElementById("step-2").style.display = "block";
-    document.getElementById("step-2").classList.remove("d-none");
-
-    const [date, time] = selectedSlot.split("T");
-
-    document.getElementById("summary-specialization").textContent = selectedSpecialization?.name || "-";
-    document.getElementById("summary-doctor").textContent = selectedDoctor?.name || "-";
-    document.getElementById("summary-date").textContent = new Date(date).toLocaleDateString('ru-RU');
-    document.getElementById("summary-time").textContent = time;
-    }
-
-
-
-
-  // Загрузка данных пациента, если авторизован
-  async function loadPatientData() {
-    try {
-      const response = await fetch("http://192.168.1.207:8080/api/patient/me");
-      if (!response.ok) return;
-      const patient = await response.json();
-      document.getElementById("secondName").value = patient.second_name || "";
-      document.getElementById("firstName").value = patient.first_name || "";
-      document.getElementById("surname").value = patient.surname || "";
-      document.getElementById("birthDate").value = patient.birth_date || "";
-      document.getElementById("phone").value = patient.phone || "";
-      if (patient.gender === "Мужской") document.getElementById("genderMale").checked = true;
-      if (patient.gender === "Женский") document.getElementById("genderFemale").checked = true;
-      userButton.textContent = `${patient.first_name} ${patient.second_name}`;
-      userButton.removeAttribute("href");
-      userButton.style.pointerEvents = "none";
-    } catch (e) {
-      console.warn("Пациент не авторизован");
-    }
-  }
-
-  firstName.addEventListener('input', () => {
-    if (firstName.value.trim().length === 0) {
-        firstNameError.textContent = 'Имя не может быть пустым';
-         firstName.classList.add('is-invalid');
-     } else {
-        firstNameError.textContent = '';
-        firstName.classList.remove('is-invalid');
-        }
-  });
-
-  secondName.addEventListener('input', () => {
-    if (secondName.value.trim().length === 0) {
-        secondNameError.textContent = 'Фамилия не может быть пустой';
-         secondName.classList.add('is-invalid');
-     } else {
-        secondNameError.textContent = '';
-        secondName.classList.remove('is-invalid');
-        }
-  });
-
-  // Отправка формы
-  patientForm.addEventListener("submit", async (e) => {
-    e.preventDefault();
-
-    if (!selectedSlot || !selectedDoctorId) return alert("Выберите врача и время");
-    if (phoneError.textContent) return;
-
-    const isFirstNameValid = firstName.value.trim().length > 0;
-    const isSecondNameValid = secondName.value.trim().length > 0;
-    if (!isFirstNameValid || !isSecondNameValid) return;
-
-    const payload = {
-      doctor_id: selectedDoctorId,
-      slot: selectedSlot,
-      patient: {
-        second_name: document.getElementById("secondName").value,
-        first_name: document.getElementById("firstName").value,
-        surname: document.getElementById("surname").value,
-        birth_date: document.getElementById("birthDate").value,
-        gender: document.querySelector('input[name="gender"]:checked')?.value,
-        phone: document.getElementById("phone").value
+      if (errors.phone) {
+        //errors.phone = 'Введите полный 11-значный номер телефона.';
+        return false;
+      } else {
+       // errors.phone = '';
+        return true;
       }
     };
 
-    const response = await fetch("http://192.168.1.207:8080/api/appointments", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload)
+    const validateFirstName = () => {
+      errors.first_name = patient.first_name.trim() ? '' : 'Имя не может быть пустым';
+      return !errors.first_name;
+    };
+
+    const validateSecondName = () => {
+      errors.second_name = patient.second_name.trim() ? '' : 'Фамилия не может быть пустой';
+      return !errors.second_name;
+    };
+
+
+    const fetchSpecialties = async () => {
+      const res = await fetch('http://192.168.1.207:8080/api/specialties');
+      specialties.value = await res.json();
+    };
+
+    const fetchDoctors = async (specialtyId) => {
+  const res = await fetch(`http://192.168.1.207:8080/api/doctors?specialty=${specialtyId}`);
+  const rawDoctors = await res.json();
+
+  // Добавляем поле fullName каждому врачу
+  doctors.value = rawDoctors.map(doc => ({
+    ...doc,
+    fullName: `${doc.second_name} ${doc.first_name} ${doc.surname}`.trim()
+  }));
+};
+
+
+    const fetchSchedule = async (doctorId) => {
+      const res = await fetch(`http://192.168.1.207:8080/api/schedule?doctor_id=${doctorId}`);
+      schedule.value = await res.json();
+      maxSlots.value = Math.max(...Object.values(schedule.value).map(day => day.length));
+    };
+
+    const selectSlot = (slot) => {
+      selectedSlot.value = slot;
+      step.value = 2;
+    };
+
+    const back = () => {
+      step.value = 1;
+      selectedSlot.value = null;
+    };
+
+    const submitForm = async () => {
+      if (!selectedSlot.value || !selectedDoctorId.value) {
+        alert('Выберите врача и время');
+        return;
+      }
+
+      if (!validatePhone() || !validateName()) return;
+
+const phoneInput = document.getElementById('phone');
+if (phoneInput) {
+  patient.phone = phoneInput.value; // Получаем то, что реально в инпуте
+}
+patient.phone = patient.phone.replace(/\D/g, '')
+
+      const payload = {
+        doctor_id: selectedDoctorId.value,
+        slot: selectedSlot.value,
+        patient: { ...patient }
+      };
+
+      const res = await fetch('http://192.168.1.207:8080/api/appointments', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      if (res.ok) {
+        alert('Запись успешно создана!');
+        location.reload();
+      } else {
+        alert('Ошибка при записи. Попробуйте позже.');
+      }
+    };
+
+    const loadPatientData = async () => {
+      try {
+        const res = await fetch('http://192.168.1.207:8080/api/patient/me');
+        if (!res.ok) return;
+        isAuthorized.value = true;
+        const data = await res.json();
+        authFirstName.value = data.first_name;
+        authSecondName.value = data.second_name;
+        Object.assign(patient, {
+          second_name: data.second_name || '',
+          first_name: data.first_name || '',
+          surname: data.surname || '',
+          birth_date: data.birthDate || '',
+          gender: data.gender || '',
+          phone: data.phone || ''
+        });
+      } catch {
+        console.warn('Пациент не авторизован');
+      }
+    };
+
+    const fullName = computed(() => {
+  return [authFirstName.value, authSecondName.value].filter(Boolean).join(' ');
     });
 
-    if (response.ok) {
-      alert("Запись успешно создана!");
-      location.reload();
-    } else {
-      alert("Ошибка при записи. Попробуйте позже.");
-    }
-  });
+const birthDateAttrs = reactive({ min: '', max: '' });
 
-  // Слушатели
-  specialtySelect.addEventListener("change", () => {
-    const id = specialtySelect.value;
-    selectedSpecialization = {
-        id,
-        name: specialtySelect.options[specialtySelect.selectedIndex].textContent
-    };
-    doctorSelect.disabled = true;
-    scheduleContainer.classList.add("d-none");
-    //patientForm.classList.add("d-none");
-    selectedDoctorId = null;
-    selectedSlot = null;
-    loadDoctors(id);
-  });
+const validateDateRange = () => {
+  const today = new Date();
+  const yyyy = today.getFullYear();
+  const mm = String(today.getMonth() + 1).padStart(2, '0');
+  const dd = String(today.getDate()).padStart(2, '0');
+  birthDateAttrs.min = `${yyyy - 110}-${mm}-${dd}`;
+  birthDateAttrs.max = `${yyyy - 18}-${mm}-${dd}`;
+};
 
-  doctorSelect.addEventListener("change", () => {
-    selectedDoctorId = doctorSelect.value;
-    selectedDoctor = {
-        id: doctorSelect.value,
-        name: doctorSelect.options[doctorSelect.selectedIndex].textContent
-    };
 
-    scheduleContainer.classList.add("d-none");
-    //patientForm.classList.add("d-none");
-    selectedSlot = null;
-    loadSchedule(selectedDoctorId);
-  });
+        function handleClickOutside(event) {
+            const popover = document.getElementById('patient-profile');
+            if (popover && !popover.contains(event.target)) {
+                isPopoverVisible = false;
+            }
+        }
 
-  document.getElementById("backButton").addEventListener("click", () => {
-  // Скрыть форму с данными пациента
-  document.getElementById("step-2").classList.add("d-none");
+    onMounted(() => {
+      fetchSpecialties();
+      loadPatientData();
+      validateDateRange();
+      document.addEventListener('click', this.handleClickOutside);
+    });
 
-  // Снова показать выбор врача и времени
-  document.getElementById("step-1").style.display = "block";
-
-  // Сброс выбранного слота (если нужно)
-  selectedSlot = null;
+    
+watch(step, (newVal) => {
+  if (newVal === 2) {
+    nextTick(() => {
+      const phoneInput = document.getElementById('phone');
+      if (phoneInput && !phoneInput.dataset.masked) {
+        const mask = IMask(phoneInput, {
+          mask: '+{7} (000) 000-00-00'
+        });
+        phoneInput.dataset.masked = "true"; // чтобы не маскировать повторно
+        mask.on('accept', () => {
+            const digits = mask.value.replace(/\D/g, '');
+            const valid = digits.length === 11 && digits.startsWith('7');
+            errors.phone = digits && !valid ? 'Неверный формат телефона' : '';
+          });
+          mask.on('complete', () => {
+  patient.phone = mask.value;
+  console.log("Телефон завершён:", patient.phone);
+});
+      }
+    });
+  }
 });
 
-  // Старт
-  loadSpecialties();
+//const onPhoneInput = () => {
+  // Маска уже точно применилась
+  //validatePhone();
+//};
+
+//watch(() => patient.phone, () => {
+  //nextTick(() => {
+    //validatePhone();
+  //});
+//});
+
+watch(() => patient.first_name, () => {
+  validateFirstName();
 });
+
+watch(() => patient.second_name, () => {
+  validateSecondName();
+});
+
+    return {
+      specialties,
+      doctors,
+      schedule,
+      maxSlots,
+      selectedDoctorId,
+      selectedSpecialization,
+      selectedDoctor,
+      selectedSlot,
+      step,
+      patient,
+      errors,
+      fetchDoctors,
+      fetchSchedule,
+      selectSlot,
+      back,
+      submitForm,
+      validatePhone,
+      isAuthorized,
+      isPopoverVisible,
+      fullName,
+      birthDateAttrs,
+    };
+  }
+}).mount("#app");

@@ -4,7 +4,8 @@ createApp({
   data() {
     return {
       activeTab: 'today',
-      doctorName: '',
+      second_name: '',
+      first_name: '',
       tabs: [
         { id: 'today', label: 'Записи на сегодня' },
         { id: 'upcoming', label: 'Расписание' },
@@ -20,12 +21,21 @@ createApp({
         "09:00", "10:00", "11:00", "12:00",
         "13:00", "14:00", "15:00", "16:00",
         "17:00", "18:00"
-      ]
+      ],
+     isPopoverVisible: false,
     };
   },
   computed: {
     todaySorted() {
       return [...this.data.today].sort((a, b) => a.time.localeCompare(b.time));
+    },
+    fullName() {
+        return [
+            this.first_name,
+            this.second_name
+        ]
+        .filter(Boolean)
+        .join(' ');
     }
   },
   methods: {
@@ -39,7 +49,8 @@ createApp({
           this.data.today = json.today || [];
           this.data.upcoming = json.upcoming || [];
           this.data.completed = json.completed || [];
-          this.doctorName = json.doctor_name || '-';
+          this.first_name = json.first_name;
+          this.second_name = json.second_name;
 
           this.scheduleDates = [...new Set(this.data.upcoming.map(x => x.date))];
 
@@ -58,9 +69,19 @@ createApp({
     isToday(dateStr) {
       const today = new Date().toISOString().split('T')[0];
       return dateStr === today;
-    }
+    },
+     togglePopover() {
+            this.isPopoverVisible = !this.isPopoverVisible;
+        },
+        handleClickOutside(event) {
+            const popover = document.getElementById('doctor-profile');
+            if (popover && !popover.contains(event.target)) {
+                this.isPopoverVisible = false;
+            }
+        }
   },
   mounted() {
     this.fetchDoctorData();
+    document.addEventListener('click', this.handleClickOutside);
   }
 }).mount('#app');

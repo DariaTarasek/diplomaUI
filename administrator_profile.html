@@ -46,15 +46,14 @@
                                 </div>                                 
                             </div>
                             <div class="col-auto">
-                                <div id="patient-profile" class="position-relative" v-cloak>
+                                <div id="admin-profile" class="position-relative" v-cloak>
                                     <button @click="isPopoverVisible = !isPopoverVisible" class="btn btn-primary" type="button">
                                         {{ fullName }}
 </button>
                                     <div v-if="isPopoverVisible" class="card shadow-sm position-absolute p-3" style="top: 60px; right: 0; z-index: 1050; min-width: 200px;">
                                         <div class="fw-bold mb-2">{{ fullName }}</div>
-                                        а
                                         <div class="d-grid gap-2">
-                                            <a href="profile.html" class="btn btn-outline-primary btn-sm">Упрвление профилем</a>
+                                            <a href="administrator_profile.html" class="btn btn-outline-primary btn-sm">Упрвление профилем</a>
                                             <a href="index.html" class="btn btn-outline-danger btn-sm">Выйти</a>
                                         </div>
                                     </div>
@@ -76,7 +75,7 @@
                             <div class="d-flex flex-wrap gap-3 justify-content-center">
                                 <button class="btn btn-lg btn-light border shadow-sm px-4 py-2 d-flex align-items-center gap-2"><i class="bi bi-display"></i> Главная
                                 </button>
-                                <button class="btn btn-lg btn-light border shadow-sm px-4 py-2 d-flex align-items-center gap-2"><i class="bi bi-calendar3"></i> Расписание приёмов
+                                <button class="btn btn-lg btn-light border shadow-sm px-4 py-2 d-flex align-items-center gap-2"><i class="bi bi-calendar3"></i> Управление расписанием
                                 </button>
                                 <button class="btn btn-lg btn-light border shadow-sm px-4 py-2 d-flex align-items-center gap-2"><i class="bi bi-person-fill-gear"></i>Список пациентов
                                 </button>
@@ -86,7 +85,7 @@
                                 <button class="btn btn-lg btn-light border shadow-sm px-4 py-2 d-flex align-items-center gap-2">
                                     <i class="bi bi-person-lines-fill"></i> Список администраторов
                                 </button>
-                                <button class="btn btn-lg btn-light border shadow-sm px-4 py-2 d-flex align-items-center gap-2"><i class="bi bi-box-seam"></i> Расходные материалы
+                                <button class="btn btn-lg btn-light border shadow-sm px-4 py-2 d-flex align-items-center gap-2"><i class="bi bi-list-ul"></i> Перечень услуг
                                 </button>
                                 <button class="btn btn-lg btn-light border shadow-sm px-4 py-2 d-flex align-items-center gap-2"><i class="bi bi-graph-up"></i> Аналитика
                                 </button>

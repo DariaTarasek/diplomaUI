@@ -24,7 +24,7 @@ createApp({
   },
   computed: {
     fullName() {
-      return [this.patient.secondName, this.patient.firstName, this.patient.surname]
+      return [this.patient.firstName, this.patient.secondName]
         .filter(Boolean)
         .join(' ');
     }

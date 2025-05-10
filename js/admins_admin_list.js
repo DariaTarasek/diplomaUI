@@ -1,4 +1,4 @@
-const { createApp, ref, reactive, watch, onMounted } = Vue;
+const { createApp, ref, reactive, watch, onMounted, computed } = Vue;
 
 
 createApp({
@@ -18,6 +18,15 @@ createApp({
       phone: ''
     });
 
+    const admin = ref({
+        second_name: '',
+        first_name: ''
+    })
+    const fullName = computed(() => {
+  return [admin.value.first_name, admin.value.second_name].filter(Boolean).join(' ');
+    });
+
+
     const emailError = ref('');
     const phoneError = ref('');
 
@@ -29,10 +38,22 @@ createApp({
     const secondNameError = ref('');
 
     const isSwitchingModals = ref(false);
+    const isPopoverVisible = ref(false);
 
     let modalEdit = null;
     let modalLogin = null;
     let modalChoice = null;
+
+    function togglePopover() {
+            isPopoverVisible = !isPopoverVisible;
+        }
+
+    function handleClickOutside(event) {
+            const popover = document.getElementById('admin-profile');
+            if (popover && !popover.contains(event.target)) {
+                isPopoverVisible = false;
+            }
+        }
 
     async function fetchUserRole() {
         try {
@@ -232,6 +253,19 @@ createApp({
       await loadStaff();
     }
 
+    async function fetchAdminData() {
+  try {
+    const res = await fetch('http://192.168.1.207:8080/api/admin-data');
+    const data = await res.json();
+
+    admin.value.first_name = data.first_name || '';
+    admin.value.second_name = data.second_name || '';
+
+  } catch (err) {
+    console.error('Ошибка при загрузке данных:', err);
+  }
+}
+
       async function deleteAdmin() {
             if (!selectedAdmin.value) return;
 
@@ -263,6 +297,11 @@ createApp({
       emailError.value = val && !emailRegex.test(val) ? 'Неверный формат email' : '';
     });
 
+    watch(() => filters.role, (val) => {
+        console.log('Выбрана роль:', val);
+        loadStaff();
+        });
+
       watch(() => form.first_name, (val) => {
         if (val.trim().length === 0) firstNameError.value = 'Имя не может быть пустым'
         else firstNameError.value = '';
@@ -273,7 +312,7 @@ createApp({
         else secondNameError.value = '';
     });
 
-    onMounted(() => {
+    onMounted(async () => {
         const editEl = document.getElementById('editModal');
         const loginEl = document.getElementById('changeLoginModal');
         const actionsEl = document.getElementById('actionsModal');
@@ -289,11 +328,10 @@ createApp({
         }
             loadRoles();
             loadStaff();
+            document.addEventListener('click', this.handleClickOutside);
+            await fetchUserRole();
+        await fetchAdminData();
     });
-
-    onMounted(async () => {
-        await fetchUserRole();
-});
 
 
     return {
@@ -321,7 +359,9 @@ createApp({
       deleteAdmin,
       formatPhone,
       firstNameError,
-      secondNameError
+      secondNameError,
+      isPopoverVisible,
+      fullName
     };
   }
 }).mount('#app');

@@ -33,9 +33,8 @@ createApp({
     computed: {
         fullName() {
             return [
-                this.admin.second_name,
                 this.admin.first_name,
-                this.admin.surname
+                this.admin.second_name
             ]
             .filter(Boolean)
             .join(' ');

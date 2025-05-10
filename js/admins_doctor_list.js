@@ -1,4 +1,4 @@
-const { createApp, ref, reactive, watch, onMounted } = Vue;
+const { createApp, ref, reactive, watch, onMounted, computed } = Vue;
 
 
 createApp({
@@ -20,6 +20,15 @@ createApp({
       education: ''
     });
 
+    const admin = ref({
+    second_name: '',
+    first_name: ''
+    })
+    const fullName = computed(() => {
+  return [admin.value.first_name, admin.value.second_name].filter(Boolean).join(' ');
+    });
+    const isPopoverVisible = ref(false);
+
     const emailError = ref('');
     const phoneError = ref('');
     const specError = ref('');
@@ -36,6 +45,17 @@ createApp({
     let modalChoice = null;
 
 
+    function togglePopover() {
+            isPopoverVisible.value = !isPopoverVisible.value;
+        }
+
+    function handleClickOutside(event) {
+            const popover = document.getElementById('admin-profile');
+            if (popover && !popover.contains(event.target)) {
+                isPopoverVisible.value = false;
+            }
+        }
+
     async function loadSpecialties() {
       specialties.value = await (await fetch('http://192.168.1.207:8080/api/admin/specialties')).json();
     }
@@ -43,7 +63,7 @@ createApp({
     async function loadStaff() {
       const params = new URLSearchParams();
       if (search.value) params.append('search', search.value);
-      if (specialties.value) params.append('specialty', filters.specialty);
+      if (filters.specialty) params.append('specialty', filters.specialty);
     
 
       const res = await fetch(`http://192.168.1.207:8080/api/staff?${params}`);
@@ -245,6 +265,19 @@ createApp({
       await loadStaff();
     }
 
+    async function fetchAdminData() {
+  try {
+    const res = await fetch('http://192.168.1.207:8080/api/admin-data');
+    const data = await res.json();
+
+    admin.value.first_name = data.first_name || '';
+    admin.value.second_name = data.second_name || '';
+
+  } catch (err) {
+    console.error('Ошибка при загрузке данных:', err);
+  }
+}
+
       async function deleteDoctor() {
             if (!selectedDoctor.value) return;
 
@@ -283,6 +316,11 @@ createApp({
         }
     });
 
+    watch(() => filters.specialty, () => {
+        loadStaff();
+        });
+
+
     watch(() => form.first_name, (val) => {
         if (val.trim().length === 0) firstNameError.value = 'Имя не может быть пустым'
         else firstNameError.value = '';
@@ -294,7 +332,7 @@ createApp({
     });
 
 
-      onMounted(() => {
+      onMounted(async () => {
         const editEl = document.getElementById('editModal');
         const loginEl = document.getElementById('changeLoginModal');
         const actionsEl = document.getElementById('actionsModal');
@@ -310,6 +348,8 @@ createApp({
         }
             loadSpecialties();
             loadStaff();
+            document.addEventListener('click', handleClickOutside);
+        await fetchAdminData();
     });
 
 
@@ -337,7 +377,9 @@ createApp({
       isSelected,
       onModalHidden,
       deleteDoctor, 
-      formatPhone
+      formatPhone,
+        isPopoverVisible,
+      fullName
     };
   }
 }).mount('#app');

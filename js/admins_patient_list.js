@@ -1,4 +1,4 @@
-const { createApp, ref, reactive, onMounted, watch } = Vue;
+const { createApp, ref, reactive, onMounted, watch, computed } = Vue;
 
 createApp({
   setup() {
@@ -14,6 +14,15 @@ createApp({
       phone: '',
       email: ''
     });
+
+    const admin = ref({
+    second_name: '',
+    first_name: ''
+    })
+    const fullName = computed(() => {
+  return [admin.value.first_name, admin.value.second_name].filter(Boolean).join(' ');
+    });
+    const isPopoverVisible = ref(false);
 
     let modalEdit = null;
     let modalLogin = null;
@@ -43,6 +52,17 @@ createApp({
     const codeSended = ref(false);
 
     const userRole = ref(null);
+
+        function togglePopover() {
+            isPopoverVisible.value = !isPopoverVisible.value;
+        }
+
+    function handleClickOutside(event) {
+            const popover = document.getElementById('admin-profile');
+            if (popover && !popover.contains(event.target)) {
+                isPopoverVisible.value = false;
+            }
+        }
 
     function formatDate(dateStr) {
         if (!dateStr) return '';
@@ -327,6 +347,19 @@ createApp({
       await loadPatients();
     }
 
+        async function fetchAdminData() {
+  try {
+    const res = await fetch('http://192.168.1.207:8080/api/admin-data');
+    const data = await res.json();
+
+    admin.value.first_name = data.first_name || '';
+    admin.value.second_name = data.second_name || '';
+
+  } catch (err) {
+    console.error('Ошибка при загрузке данных:', err);
+  }
+}
+
     async function deletePatient() {
   if (!selectedPatient.value) return;
 
@@ -369,7 +402,7 @@ createApp({
         else secondNameError.value = '';
     });
 
-    onMounted(() => {
+    onMounted(async () => {
   const editEl = document.getElementById('editModal');
   const loginEl = document.getElementById('changeLoginModal');
   const actionsEl = document.getElementById('actionsModal');
@@ -385,12 +418,10 @@ createApp({
   }
 
   loadPatients();
-});
-
-onMounted(async () => {
   await fetchUserRole();
+  document.addEventListener('click', handleClickOutside);
+    await fetchAdminData();
 });
-
 
     return {
       patients,
@@ -427,7 +458,9 @@ onMounted(async () => {
       fetchUserRole,
       deletePatient, 
       firstNameError,
-      secondNameError
+      secondNameError,
+      isPopoverVisible,
+      fullName
     };
   }
 }).mount('#app');
