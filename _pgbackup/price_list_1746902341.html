@@ -116,7 +116,7 @@
                                         <option v-for="category in serviceCategories" :key="category.id" :value="category.id">{{ category.name }}</option>
                                     </select>
                                 </div>
-                                <div class="mb-3 text-start" v-if="userRole === 'superadmin'">
+                                <div class="mb-3 text-start" v-if "userRole='superadmin'>
                                     <button class="btn btn-primary" @click="openAddModal">Добавить</button>
                                 </div>
                                 <!-- Список услуг -->

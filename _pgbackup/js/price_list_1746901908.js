@@ -36,6 +36,8 @@ createApp({
         addCategoryError: '',
         addPriceError: '',
 
+         isLoaded: false,
+
          userRole: ''
     };
   },
@@ -54,7 +56,7 @@ createApp({
         const userData = await userRes.json();
         this.first_name = userData.first_name || '';
         this.second_name = userData.second_name || '';
-        this.userRole = userData.Role.role || '';
+        this.userRole = userData.role || '';
 
         await this.fetchServices();
         await this.fetchMaterials();
@@ -340,6 +342,7 @@ createApp({
 
   mounted() {
     this.fetchData().finally(() => {
+    this.isLoaded = true;
   });
     this.fetchServiceCategories();
     document.addEventListener('click', this.handleClickOutside);

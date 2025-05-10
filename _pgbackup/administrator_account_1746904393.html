@@ -96,8 +96,7 @@
                 <div class="align-items-center flex-wrap w-100 mt-3">
                     <h3 class="mb-3 text-center">Главная</h3>
                 </div>
-                <div class=" mb-3 text-center">
-                    <button class="btn btn-primary w-25" @click="openModal">Новая запись</button>
+                <div class=" mb-3 text-center"><a class="btn btn-primary w-25" data-bs-toggle="modal" data-bs-target="#appointmentModal" @click="openModal">Новая запись</a>
                 </div>
                 <div class="container py-3">
                     <div class="row justify-content-center">
@@ -158,11 +157,11 @@
                     </div>
                 </div>
                 <!-- Модальное окно для новой записи -->
-                <div class="modal fade" id="appointmentModal" tabindex="-1" aria-labelledby="appointmentModalLabel" aria-hidden="true">
+                <div class="modal fade" id="appointmentModal" tabindex="-1" aria-hidden="true">
                     <div class="modal-dialog modal-xl modal-dialog-centered">
-                        <div class="modal-content">
+                        <div class="modal-content" id="appointment-form" v-cloak>
                             <div class="modal-header">
-                                <h5 class="modal-title" id="appointmentModalLabel">Запись на приём</h5>
+                                <h5 class="modal-title">Запись на приём</h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
                             </div>
                             <div class="modal-body">
@@ -180,25 +179,25 @@
                                     </div>
                                     <div class="mb-3">
                                         <label class="form-label">Выберите врача</label>
-                                        <select class="form-select" v-model="selectedDoctorId" @change="fetchDoctorSchedule(selectedDoctorId)" :disabled="!selectedSpecialization">
+                                        <select class="form-select" v-model="selectedDoctorId" @change="fetchSchedule(selectedDoctorId)" :disabled="!selectedSpecialization">
                                             <option disabled value="">Выберите врача</option>
                                             <option v-for="doc in doctors" :key="doc.id" :value="doc.id">
                                                 {{ doc.fullName }}
 </option>
                                         </select>
                                     </div>
-                                    <div v-if="selectedDoctorId && Object.keys(appointmentSchedule).length" class="my-4">
+                                    <div v-if="Object.keys(schedule).length" class="my-4">
                                         <h5 class="mb-3">Выберите удобное время</h5>
-                                        <table class="table table-bordered text-center align-middle">
+                                        <table class="table table-bordered text-center">
                                             <thead>
                                                 <tr>
-                                                    <th v-for="(slots, day) in appointmentSchedule" :key="day">{{ day }}</th>
+                                                    <th v-for="(slots, day) in schedule" :key="day">{{ day }}</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 <tr v-for="i in maxSlots" :key="i">
-                                                    <td v-for="(slots, day) in appointmentSchedule" :key="day + '-' + i">
-                                                        <button v-if="slots[i - 1]" class="btn btn-outline-primary btn-sm mb-1" @click="selectSlot(slots[i - 1])">
+                                                    <td v-for="(slots, day) in schedule" :key="day + '-' + i">
+                                                        <button v-if="slots[i - 1]" class="btn btn-outline-primary btn-sm" @click="selectSlot(slots[i - 1])">
                                                             {{ slots[i - 1] }}
 </button>
                                                     </td>
@@ -224,39 +223,17 @@
                                             </li>
                                         </ul>
                                         <form @submit.prevent="submitForm">
-                                            <div class="mb-3">
-                                                <label class="form-label">Фамилия</label>
-                                                <input type="text" v-model="patient.second_name" class="form-control" @input="validateSecondName">
-                                                <div class="text-danger">{{ errors.second_name }}</div>
-                                            </div>
-                                            <div class="mb-3">
-                                                <label class="form-label">Имя</label>
-                                                <input type="text" v-model="patient.first_name" class="form-control" @input="validateFirstName">
-                                                <div class="text-danger">{{ errors.first_name }}</div>
-                                            </div>
-                                            <div class="mb-3">
-                                                <label class="form-label">Отчество (необязательно)</label>
-                                                <input type="text" v-model="patient.surname" class="form-control">
-                                            </div>
-                                            <div class="mb-3">
-                                                <label class="form-label">Дата рождения</label>
-                                                <input type="date" v-model="patient.birth_date" class="form-control" :min="birthDateAttrs.min" :max="birthDateAttrs.max">
-                                            </div>
-                                            <div class="mb-3">
-                                                <label class="form-label">Пол</label>
-                                                <select v-model="patient.gender" class="form-select">
-                                                    <option value="">Выберите пол</option>
-                                                    <option value="male">Мужской</option>
-                                                    <option value="female">Женский</option>
-                                                </select>
-                                            </div>
-                                            <div class="mb-3">
-                                                <label class="form-label">Телефон</label>
-                                                <input type="text" id="phone" class="form-control" placeholder="+7 (___) ___-__-__">
-                                                <script src="https://unpkg.com/imask"></script>
-                                                <div class="text-danger">{{ errors.phone }}</div>
-                                            </div>
-                                            <button type="submit" class="btn btn-primary">Записаться</button>
+                                            <input v-model="patient.second_name" placeholder="Фамилия" @input="validateSecondName"><span class="error">{{ errors.second_name }}</span>
+                                            <input v-model="patient.first_name" placeholder="Имя" @input="validateFirstName"><span class="error">{{ errors.first_name }}</span>
+                                            <input v-model="patient.surname" placeholder="Отчество (необязательно)">
+                                            <input type="date" v-model="patient.birth_date" :min="birthDateAttrs.min" :max="birthDateAttrs.max">
+                                            <select v-model="patient.gender">
+                                                <option value="">Пол</option>
+                                                <option value="male">Мужской</option>
+                                                <option value="female">Женский</option>
+                                            </select>
+                                            <input id="phone" placeholder="Телефон"><span class="error">{{ errors.phone }}</span>
+                                            <button type="submit">Записаться</button>
                                         </form>
                                     </div>
                                 </div>

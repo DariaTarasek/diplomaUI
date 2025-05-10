@@ -114,21 +114,20 @@ createApp({
       this.specialties = await res.json();
     },
 
-   async fetchDoctors(specialtyId) {
-  const res = await fetch(`http://192.168.1.207:8080/api/doctors?specialty=${specialtyId}`);
-  const rawDoctors = await res.json();
-  this.doctors = rawDoctors.map(doc => ({
-    ...doc,
-    fullName: `${doc.second_name} ${doc.first_name} ${doc.surname}`.trim()
-  }));
-},
+    async fetchDoctors(specialtyId) {
+      const res = await fetch(`http://192.168.1.207:8080/api/doctors?specialty=${specialtyId}`);
+      const rawDoctors = await res.json();
+      this.doctors = rawDoctors.map(doc => ({
+        ...doc,
+        fullName: `${doc.second_name} ${doc.first_name} ${doc.surname}`.trim()
+      }));
+    },
 
-async fetchDoctorSchedule(doctorId) {
-  const res = await fetch(`http://192.168.1.207:8080/api/schedule?doctor_id=${doctorId}`);
-  this.appointmentSchedule = await res.json();
-  this.maxSlots = Math.max(...Object.values(this.appointmentSchedule).map(day => day.length));
-},
-
+    async fetchDoctorSchedule(doctorId) {
+      const res = await fetch(`http://192.168.1.207:8080/api/schedule?doctor_id=${doctorId}`);
+      this.appointmentSchedule = await res.json();
+      this.maxSlots = Math.max(...Object.values(this.appointmentSchedule).map(day => day.length));
+    },
 
     selectSlot(slot) {
       this.selectedSlot = slot;
@@ -200,8 +199,7 @@ async fetchDoctorSchedule(doctorId) {
 
     openModal() {
         this.resetModalData();             // очищаем старые данные
-        this.fetchSpecialties();            // загружаем специализации
-        this.validateDateRange();           
+        this.fetchSpecialties();           // загружаем специализации
 
         const modalEl = document.getElementById('appointmentModal');
         const modal = new bootstrap.Modal(modalEl);

@@ -114,21 +114,20 @@ createApp({
       this.specialties = await res.json();
     },
 
-   async fetchDoctors(specialtyId) {
-  const res = await fetch(`http://192.168.1.207:8080/api/doctors?specialty=${specialtyId}`);
-  const rawDoctors = await res.json();
-  this.doctors = rawDoctors.map(doc => ({
-    ...doc,
-    fullName: `${doc.second_name} ${doc.first_name} ${doc.surname}`.trim()
-  }));
-},
+    async fetchDoctors(specialtyId) {
+      const res = await fetch(`http://192.168.1.207:8080/api/doctors?specialty=${specialtyId}`);
+      const rawDoctors = await res.json();
+      this.doctors = rawDoctors.map(doc => ({
+        ...doc,
+        fullName: `${doc.second_name} ${doc.first_name} ${doc.surname}`.trim()
+      }));
+    },
 
-async fetchDoctorSchedule(doctorId) {
-  const res = await fetch(`http://192.168.1.207:8080/api/schedule?doctor_id=${doctorId}`);
-  this.appointmentSchedule = await res.json();
-  this.maxSlots = Math.max(...Object.values(this.appointmentSchedule).map(day => day.length));
-},
-
+    async fetchDoctorSchedule(doctorId) {
+      const res = await fetch(`http://192.168.1.207:8080/api/schedule?doctor_id=${doctorId}`);
+      this.appointmentSchedule = await res.json();
+      this.maxSlots = Math.max(...Object.values(this.appointmentSchedule).map(day => day.length));
+    },
 
     selectSlot(slot) {
       this.selectedSlot = slot;
@@ -199,37 +198,12 @@ async fetchDoctorSchedule(doctorId) {
     },
 
     openModal() {
-        this.resetModalData();             // очищаем старые данные
-        this.fetchSpecialties();            // загружаем специализации
-        this.validateDateRange();           
-
-        const modalEl = document.getElementById('appointmentModal');
-        const modal = new bootstrap.Modal(modalEl);
-        modal.show();
+        console.log('Открытие модалки'); // для отладки
+      this.showModal = true;
+      this.step = 1;
+      this.fetchSpecialties();
+      this.validateDateRange();
     },
-
-    resetModalData() {
-        this.selectedSpecialization = null;
-        this.selectedDoctorId = null;
-        this.selectedDoctor = null;
-        this.appointmentSchedule = {};
-        this.selectedSlot = null;
-        this.step = 1;
-        this.patient = {
-            second_name: '',
-            first_name: '',
-            surname: '',
-            birth_date: '',
-            gender: '',
-            phone: ''
-        };
-        this.errors = {
-            phone: '',
-            first_name: '',
-            second_name: ''
-        };
-    },
-
 
     closeModal() {
       this.showModal = false;

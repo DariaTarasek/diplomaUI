@@ -15,7 +15,7 @@
         <link href="footer_style.css" rel="stylesheet">
         <title>Design of the Week Template 15 - Pinegrow Web Editor</title>
         <style>.tab-content > .tab-pane { display: none; } .tab-content > .active { display: block; } th, td { text-align: center; vertical-align: middle; }</style>
-        <style>[v-cloak] { display: none !important; }</style>
+        <style>[v-cloak] { display: none; }</style>
     </head>
     <body class="text-muted">
         <div id="app" v-cloak>
@@ -116,7 +116,7 @@
                                         <option v-for="category in serviceCategories" :key="category.id" :value="category.id">{{ category.name }}</option>
                                     </select>
                                 </div>
-                                <div class="mb-3 text-start" v-if="userRole === 'superadmin'">
+                                <div class="mb-3 text-start">
                                     <button class="btn btn-primary" @click="openAddModal">Добавить</button>
                                 </div>
                                 <!-- Список услуг -->
@@ -156,7 +156,7 @@
                     </div>
                 </div>
                 <!--Модальное окно управление услугой -->
-                <div tabindex="-1" v-cloak v-if="selectedService && (userRole === 'superadmin')" class="modal show d-block bg-dark bg-opacity-50">
+                <div v-if="selectedService" class="modal show d-block bg-dark bg-opacity-50">
                     <div class="modal-dialog">
                         <div class="modal-content p-1">
                             <div class="modal-header">
@@ -171,7 +171,7 @@
                     </div>
                 </div>
                 <!--Модальное окно управления расходником -->
-                <div tabindex="-1" v-cloak v-if="selectedMaterial && (userRole === 'superadmin')" class="modal show d-block bg-dark bg-opacity-50">
+                <div v-if="selectedMaterial" class="modal show d-block bg-dark bg-opacity-50">
                     <div class="modal-dialog">
                         <div class="modal-content p-1">
                             <div class="modal-header">
@@ -186,7 +186,7 @@
                     </div>
                 </div>
                 <!-- Модалка редактирования цены услуги -->
-                <div tabindex="-1" v-cloak v-if="(userRole === 'superadmin') && isEditingService" class="modal show d-block bg-dark bg-opacity-50">
+                <div v-if="isEditingService" class="modal show d-block bg-dark bg-opacity-50">
                     <div class="modal-dialog">
                         <div class="modal-content p-3">
                             <h5 class="modal-title">Новая цена<span style="color:red;">*</span></h5>
@@ -202,7 +202,7 @@
                     </div>
                 </div>
                 <!-- Модалка редактирования цены расходника -->
-                <div v-cloak tabindex="-1" v-if="(userRole === 'superadmin') && isEditingMaterial" class="modal show d-block bg-dark bg-opacity-50">
+                <div v-if="isEditingMaterial" class="modal show d-block bg-dark bg-opacity-50">
                     <div class="modal-dialog">
                         <div class="modal-content p-3">
                             <h5 class="modal-title">Новая цена<span style="color:red;">*</span></h5>
@@ -217,7 +217,7 @@
                         </div>
                     </div>
                 </div>
-                <div v-cloak class="modal fade" id="addModal" tabindex="-1" aria-hidden="true">
+                <div class="modal fade" id="addModal" tabindex="-1" aria-hidden="true">
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <form @submit.prevent="submitAdd">

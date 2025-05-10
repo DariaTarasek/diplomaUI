@@ -200,8 +200,7 @@ async fetchDoctorSchedule(doctorId) {
 
     openModal() {
         this.resetModalData();             // очищаем старые данные
-        this.fetchSpecialties();            // загружаем специализации
-        this.validateDateRange();           
+        this.fetchSpecialties();           // загружаем специализации
 
         const modalEl = document.getElementById('appointmentModal');
         const modal = new bootstrap.Modal(modalEl);

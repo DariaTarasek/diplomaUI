@@ -34,9 +34,7 @@ createApp({
         editMaterialError: '',
         addNameError: '',
         addCategoryError: '',
-        addPriceError: '',
-
-         userRole: ''
+        addPriceError: ''
     };
   },
 
@@ -49,12 +47,10 @@ createApp({
   methods: {
     async fetchData() {
       try {
-       
         const userRes = await fetch('http://192.168.1.207:8080/api/admin-data');
         const userData = await userRes.json();
         this.first_name = userData.first_name || '';
         this.second_name = userData.second_name || '';
-        this.userRole = userData.Role.role || '';
 
         await this.fetchServices();
         await this.fetchMaterials();
@@ -339,8 +335,7 @@ createApp({
 
 
   mounted() {
-    this.fetchData().finally(() => {
-  });
+    this.fetchData();
     this.fetchServiceCategories();
     document.addEventListener('click', this.handleClickOutside);
   }
