@@ -31,12 +31,20 @@ createApp({
       step: 1,
 
       patient: {
+        id: '',
         second_name: '',
         first_name: '',
         surname: '',
         birth_date: '',
         gender: '',
         phone: ''
+      },
+      doctor: {
+        id: '',
+        second_name: '',
+        first_name: '',
+        surname: '',
+        specialty: ''
       },
       errors: {
         phone: '',
@@ -47,12 +55,25 @@ createApp({
         min: '',
         max: ''
       },
+
+      selectedAppt: null,
+
+      selectedTransferSlot: {
+        date: null,
+        time: null
+        },
+
+      currentWeekStartIndex: 0,  // индекс начала текущей видимой недели
+
     };
   },
 
   computed: {
     fullName() {
       return [this.first_name, this.second_name].filter(Boolean).join(' ');
+    },
+    visibleWeekDays() {
+        return this.schedule.days.slice(this.currentWeekStartIndex, this.currentWeekStartIndex + 7);
     }
   },
 
@@ -233,8 +254,101 @@ async fetchDoctorSchedule(doctorId) {
 
     closeModal() {
       this.showModal = false;
+    },
+
+    openAppointmentModal(day, time, appt) {
+        this.selectedAppt = { ...appt, day, time };
+        const modal = new bootstrap.Modal(document.getElementById('manageAppointmentModal'));
+        modal.show();
+    },
+
+    showTransferModal() {
+    if (!this.selectedAppt) return;
+
+    this.appointmentSchedule = {};
+    this.selectedTransferSlot = { date: null, time: null };
+
+
+    this.fetchDoctorSchedule(this.selectedAppt.doctor.id); // <-- нужен doctor_id в `appt`
+
+    const manageModal = bootstrap.Modal.getInstance(document.getElementById('manageAppointmentModal'));
+    if (manageModal) manageModal.hide();
+
+    const transferModal = new bootstrap.Modal(document.getElementById('transferAppointmentModal'));
+    transferModal.show();
+    },
+
+    async rescheduleAppointment(newDate, newTime) {
+    if (!this.selectedAppt) return;
+
+    const payload = {
+        doctor_id: this.selectedAppt.doctor.id,
+        patient_id: this.selectedAppt.patient.id,
+        old_slot: { day: this.selectedAppt.day, time: this.selectedAppt.time },
+        new_slot: { day: newDate, time: newTime }
+    };
+
+    const res = await fetch('http://192.168.1.207:8080/api/reschedule', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+    });
+
+    if (res.ok) {
+        alert('Запись успешно перенесена');
+        location.reload();
+    } else {
+        alert('Ошибка переноса');
     }
-  },
+    },
+
+    confirmTransfer() {
+        if (!this.selectedTransferSlot.date || !this.selectedTransferSlot.time) return;
+
+        this.rescheduleAppointment(this.selectedTransferSlot.date, this.selectedTransferSlot.time);
+    },
+
+    selectTransferSlot(date, time) {
+        this.selectedTransferSlot = { date, time };
+    },
+
+    prevWeek() {
+        if (this.currentWeekStartIndex >= 7) {
+            this.currentWeekStartIndex -= 7;
+        }
+    },
+    nextWeek() {
+        if (this.currentWeekStartIndex + 7 < this.schedule.days.length) {
+            this.currentWeekStartIndex += 7;
+        }
+    },
+
+    
+
+    async confirmCancelAppointment() {
+    if (!confirm('Вы уверены, что хотите отменить запись?')) return;
+
+    const payload = {
+        doctor_id: this.selectedAppt.doctor.id,
+        patient_id: this.selectedAppt.patient.id,
+        day: this.selectedAppt.day,
+        time: this.selectedAppt.time
+    };
+
+    const res = await fetch('http://192.168.1.207:8080/api/cancel-appointment', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+    });
+
+    if (res.ok) {
+        alert('Запись отменена');
+        location.reload();
+    } else {
+        alert('Ошибка отмены записи');
+    }
+    },
+     },
 
   watch: {
     'patient.first_name': 'validateFirstName',

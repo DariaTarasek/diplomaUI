@@ -113,23 +113,29 @@
                                 <div class="tab-content">
                                     <!-- Расписание -->
                                     <div v-if="activeTab === 'schedule'" class="tab-pane active">
+                                        <div class="d-flex justify-content-between align-items-center mb-2">
+                                            <button class="btn btn-sm btn-outline-primary" @click="prevWeek" :disabled="currentWeekStartIndex === 0">← Предыдущая неделя</button>
+                                            <h5 class="mb-0">Расписание приёмов</h5>
+                                            <button class="btn btn-sm btn-outline-primary" @click="nextWeek" :disabled="currentWeekStartIndex + 7 >= schedule.days.length">Следующая неделя →</button>
+                                        </div>
                                         <h5 class="mb-3">Расписание приёмов</h5>
                                         <div class="table-responsive">
                                             <table class="table table-bordered">
                                                 <thead>
                                                     <tr>
                                                         <th>Время</th>
-                                                        <th v-for="day in schedule.days" :key="day">{{ day }}</th>
+                                                        <th v-for="day in visibleWeekDays" :key="day.date">
+                                                        {{ day.weekday }}<br>{{ day.date }} </th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
                                                     <tr v-for="(time, timeIndex) in schedule.timeSlots" :key="timeIndex">
                                                         <td>{{ time }}</td>
-                                                        <td v-for="(day, dayIndex) in schedule.days" :key="dayIndex">
-                                                            <div v-if="appointments[day] && appointments[day][time]">
-                                                                <div v-for="(appt, idx) in appointments[day][time]" :key="idx" class="mb-2 p-1 border rounded bg-light"><strong>{{ appt.doctor }}</strong>
+                                                        <td v-for="(day, dayIndex) in visibleWeekDays" :key="day.date">
+                                                            <div v-if="appointments[day.date] && appointments[day.date][time]">
+                                                                <div v-for="(appt, idx) in appointments[day.date][time]" :key="idx" class="mb-2 p-1 border rounded bg-light cursor-pointer" @click="openAppointmentModal(day, time, appt)"><strong>{{ appt.doctor.second_name + " " + appt.doctor.first_name + " " + appt.doctor.surname }}</strong>
                                                                     <br>
-                                                                    {{ appt.patient }}
+                                                                    {{ appt.patient.second_name + " " + appt.patient.first_name + " " + appt.patient.surname }}
                                                                 </div>
                                                             </div>
                                                         </td>
@@ -189,7 +195,7 @@
                                     </div>
                                     <div v-if="selectedDoctorId && Object.keys(appointmentSchedule).length" class="my-4">
                                         <h5 class="mb-3">Выберите удобное время</h5>
-                                        <table class="table table-bordered text-center align-middle">
+                                        <table class="table table-bordered text-center align-middle table-hover">
                                             <thead>
                                                 <tr>
                                                     <th v-for="(slots, day) in appointmentSchedule" :key="day">{{ day }}</th>
@@ -260,6 +266,53 @@
                                         </form>
                                     </div>
                                 </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Модалка управления записью -->
+                <div class="modal fade" id="manageAppointmentModal" tabindex="-1" aria-labelledby="manageModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content p-3">
+                            <button type="button" class="btn-close position-absolute top-0 end-0 m-3" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                            <h5 class="modal-title mb-3" id="manageModalLabel">Управление записью</h5>
+                            <div>
+                                <p><strong>Врач:</strong> {{ selectedAppt?.doctor.second_name + " " + selectedAppt?.doctor.first_name + " " + selectedAppt?.doctor.surname + ", " + selectedAppt?.doctor.specialty}}</p>
+                                <p><strong>Пациент:</strong> {{ selectedAppt?.patient.second_name + " " + selectedAppt?.patient.first_name + " " + selectedAppt?.patient.surname + ", " + selectedAppt?.patient.birthDate + ", " + selectedAppt?.patient.gender + ", " + selectedAppt?.patient.phone }}</p>
+                                <p><strong>Дата и время:</strong> {{ selectedAppt?.day.date + ",  " +  selectedAppt?.time }}</p>
+                            </div>
+                            <div class="d-flex justify-content-between mt-4">
+                                <button class="btn btn-primary" @click="showTransferModal">Перенести запись</button>
+                                <button class="btn btn-danger" @click="confirmCancelAppointment">Отменить запись</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Модалка переноса записи -->
+                <div class="modal fade" id="transferAppointmentModal" tabindex="-1">
+                    <div class="modal-dialog">
+                        <div class="modal-content p-3">
+                            <button type="button" class="btn-close position-absolute top-0 end-0 m-3" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                            <h5 class="modal-title mb-3">Перенос записи</h5>
+                            <div v-if="appointmentSchedule && Object.keys(appointmentSchedule).length">
+                                <div v-for="(slots, date) in appointmentSchedule" :key="date" class="mb-3"><strong>{{ date }}</strong>
+                                    <div class="d-flex flex-wrap gap-2 mt-1">
+                                        <button v-for="slot in slots" :key="slot" @click="selectTransferSlot(date, slot)" class="btn btn-sm" :class="{
+                                'btn-primary': selectedTransferSlot.date === date && selectedTransferSlot.time === slot,
+                                'btn-outline-primary': selectedTransferSlot.date !== date || selectedTransferSlot.time !== slot
+                            }">
+                                            {{ slot }}
+</button>
+                                    </div>
+                                </div>
+                                <div class="d-flex justify-content-end mt-3">
+                                    <button class="btn btn-primary" :disabled="!selectedTransferSlot.date || !selectedTransferSlot.time" @click="confirmTransfer">
+                                        Перенести запись
+</button>
+                                </div>
+                            </div>
+                            <div v-else>
+                                <p>Нет доступных слотов.</p>
                             </div>
                         </div>
                     </div>
