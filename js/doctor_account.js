@@ -54,10 +54,6 @@ createApp({
 
           this.scheduleDates = [...new Set(this.data.upcoming.map(x => x.date))];
 
-          const nameButton = document.getElementById('doctor_name');
-          if (nameButton) {
-            nameButton.textContent = this.doctorName;
-          }
         })
         .catch(err => {
           console.error('Ошибка при получении данных:', err);
