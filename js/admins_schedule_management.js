@@ -16,30 +16,43 @@ createApp({
             type: 'off',
             start_time: '',
             end_time: '',
-            slot_minutes: null,
         },
     isPopoverVisible: false,
     admin: {
         first_name: '',
-        second_name: ''
+        second_name: '',
+        role: '',
         },
     invalidDays: [],
     invalidClinicDays: [],
     clinicSlotError: false,
     doctorSlotError: false,
-    overrideSlotError: false,
+    //overrideSlotError: false,
     overrideErrors: {
         date: false,
         start_time: false,
         end_time: false,
-        slot_minutes: false
+        },
+     overrideClinicForm: {
+        date: '',
+        type: 'off',
+        start_time: '',
+        end_time: '',
+         },
+    overrideClinicErrors: {
+        date: false,
+        start_time: false,
+        end_time: false,
         },
     };
-  },
+},
   computed: {
     fullName() {
       return [this.admin.first_name, this.admin.second_name].filter(Boolean).join(' ');
         },
+    isSuperAdmin() {
+         return this.admin.role === 'superadmin';
+  },
     },
   mounted() {
     this.loadClinicSchedule();
@@ -52,13 +65,6 @@ createApp({
         this.isPopoverVisible = !this.isPopoverVisible;
     },
 
-    handleOverrideDateChange() {
-        if (this.isValidSlot(this.clinicSlotMinutes)) {
-            this.overrideForm.slot_minutes = this.clinicSlotMinutes;
-        } else {
-            this.overrideForm.slot_minutes = null;
-    }
-    },
 
       async fetchData() {
       try {
@@ -66,6 +72,7 @@ createApp({
         const data = await res.json();
         this.admin.first_name = data.first_name || '';
         this.admin.second_name = data.second_name || '';
+        this.admin.role = data.role.role || '';
         }
         catch (err) {
         console.error('Ошибка при загрузке данных:', err);
@@ -269,6 +276,50 @@ async fetchDoctorSchedule() {
     }
     }, 
 
+    async saveOverrideClinic() {
+        this.overrideClinicErrors = {
+            date: false,
+            start_time: false,
+            end_time: false,
+        };
+
+        if (!this.isValidDateOverride(this.overrideClinicForm.date)) {
+            this.overrideClinicErrors.date = true;
+            alert('Недопустимая дата. Выберите дату не позднее трех месяцев от текущей.');
+            return;
+        }
+
+        if (this.overrideClinicForm.type === 'work') {
+            if (!this.validateTimeInterval(this.overrideClinicForm.start_time, this.overrideClinicForm.end_time, 0)) {
+            this.overrideClinicErrors.start_time = true;
+            this.overrideClinicErrors.end_time = true;
+            alert('Недопустимый интервал времени');
+            return;
+            }
+        }
+
+        try {
+            const res = await fetch('http://192.168.1.207:8080/api/clinic-overrides', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(this.overrideClinicForm),
+            });
+
+            if (!res.ok) throw new Error('Ошибка при сохранении переопределения');
+            alert('Переопределение сохранено');
+
+            this.overrideClinicForm = {
+            date: '',
+            type: 'off',
+            start_time: '',
+            end_time: ''
+            };
+        } catch (err) {
+            console.error(err);
+            alert('Не удалось сохранить переопределение');
+        }
+        }, 
+
     async saveOverride() {
         this.overrideErrors = {
             date: false,
@@ -285,7 +336,7 @@ async fetchDoctorSchedule() {
     }
 
     if (this.overrideForm.type === 'work') {
-        if (!this.validateTimeInterval(this.overrideForm.start_time, this.overrideForm.end_time, this.overrideForm.slot_minutes)) {
+        if (!this.validateTimeInterval(this.overrideForm.start_time, this.overrideForm.end_time, 0)) {
             this.overrideErrors.start_time = true;
             this.overrideErrors.end_time = true;
             alert('Недопустимый интервал времени');
@@ -301,16 +352,6 @@ async fetchDoctorSchedule() {
                 alert('Выбранные параметры не соответствуют расписанию клиники');
                 return;
             }
-
-           if (!this.isValidSlot(this.overrideForm.slot_minutes)) {
-                this.overrideErrors.slot_minutes = true;
-                this.overrideSlotError = true;
-                alert('Продолжительность приема должна составлять от 5 до 180 минут');
-                return;
-           } else {
-                this.overrideSlotError = false;
-            }
-
         }
       try {
         const res = await fetch('http://192.168.1.207:8080/api/doctor-overrides', {
@@ -320,7 +361,6 @@ async fetchDoctorSchedule() {
         });
         if (!res.ok) throw new Error('Ошибка при сохранении переопределения');
         alert('Переопределение сохранено');
-        // Очистка формы
         this.overrideForm = {
           doctor_id: null,
           date: '',

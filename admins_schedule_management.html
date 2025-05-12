@@ -117,22 +117,22 @@
                                     <tr v-for="day in clinicSchedule" :key="day.day">
                                         <td>{{ dayLabels[day.day] }}</td>
                                         <td>
-                                            <input type="checkbox" v-model="day.is_open" class="form-check-input"/>
+                                            <input type="checkbox" v-model="day.is_open" class="form-check-input" :disabled="!isSuperAdmin"/>
                                         </td>
                                         <td>
-                                            <input type="time" v-model="day.start_time" class="form-control" :disabled="!day.is_open" :class="{ 'is-invalid': invalidClinicDays.includes(day.day) }">
+                                            <input type="time" v-model="day.start_time" class="form-control" :disabled="!day.is_open || !isSuperAdmin" :class="{ 'is-invalid': invalidClinicDays.includes(day.day) }">
                                         </td>
                                         <td>
-                                            <input type="time" v-model="day.end_time" class="form-control" :disabled="!day.is_open" :class="{ 'is-invalid': invalidClinicDays.includes(day.day) }">
+                                            <input type="time" v-model="day.end_time" class="form-control" :disabled="!day.is_open || !isSuperAdmin" :class="{ 'is-invalid': invalidClinicDays.includes(day.day) }">
                                         </td>
                                     </tr>
                                 </tbody>
                             </table>
                             <div class="mb-3">
                                 <label class="form-label">Продолжительность проведения приема (мин)</label>
-                                <input type="number" v-model="clinicSlotMinutes" class="form-control" min="5" max="180" :class="['form-control', clinicSlotError ? 'is-invalid' : '']">
+                                <input type="number" v-model="clinicSlotMinutes" class="form-control" min="5" max="180" :class="['form-control', clinicSlotError ? 'is-invalid' : '']" :disabled="!isSuperAdmin">
                             </div>
-                            <button class="btn btn-primary" @click="saveClinicSchedule">Сохранить</button>
+                            <button class="btn btn-primary" @click="saveClinicSchedule" v-if="isSuperAdmin">Сохранить</button>
                         </div>
                     </div>
                     <!-- Постоянное расписание врача -->
@@ -176,7 +176,37 @@
                             <button class="btn btn-primary" @click="saveDoctorSchedule">Сохранить</button>
                         </div>
                     </div>
-                    <!-- Переопределения -->
+                    <!-- Переопределение для всей клиники-->
+                    <div class="card mb-4">
+                        <div class="card-header bg-light">Переопределение дня работы клиники</div>
+                        <div class="card-body">
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <label class="form-label">Дата</label>
+                                    <input type="date" v-model="overrideClinicForm.date" class="form-control" :class="{ 'is-invalid': overrideClinicErrors.date}" @change="handleOverrideClinicDateChange"/>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Тип</label>
+                                    <select v-model="overrideClinicForm.type" class="form-select">
+                                        <option value="work">Рабочий день</option>
+                                        <option value="off">Выходной</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row g-3 mt-3" v-if="overrideClinicForm.type === 'work'">
+                                <div class="col-md-4">
+                                    <label class="form-label">Начало</label>
+                                    <input type="time" v-model="overrideClinicForm.start_time" class="form-control" :class="{ 'is-invalid': overrideClinicErrors.start_time }">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label">Конец</label>
+                                    <input type="time" v-model="overrideClinicForm.end_time" class="form-control" :class="{ 'is-invalid':  overrideClinicErrors.end_time }">
+                                </div>
+                            </div>
+                            <button class="btn btn-primary mt-3" @click="saveOverrideClinic">Сохранить переопределение</button>
+                        </div>
+                    </div>
+                    <!-- Переопределение для врача -->
                     <div class="card mb-4">
                         <div class="card-header bg-light">Переопределение дня врача</div>
                         <div class="card-body">
@@ -207,10 +237,6 @@
                                 <div class="col-md-4">
                                     <label class="form-label">Конец</label>
                                     <input type="time" v-model="overrideForm.end_time" class="form-control" :class="{ 'is-invalid':  overrideErrors.end_time }">
-                                </div>
-                                <div class="col-md-4">
-                                    <label class="form-label">Продолжительность  приема (мин)</label>
-                                    <input type="number" v-model="overrideForm.slot_minutes" class="form-control" :class="{ 'is-invalid':  overrideErrors.slot_minutes }" min="5" max="180" :class="['form-control', overrideSlotError ? 'is-invalid' : '']">
                                 </div>
                             </div>
                             <button class="btn btn-primary mt-3" @click="saveOverride">Сохранить переопределение</button>
