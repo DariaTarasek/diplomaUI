@@ -82,7 +82,7 @@ createApp({
       if (filters.role) params.append('role', filters.role);
     
 
-      const res = await fetch(`http://192.168.1.207:8080/api/staff?${params}`);
+      const res = await fetch(`http://192.168.1.207:8080/api/staff-admins?${params}`);
       staff.value = await res.json();
     }
 
@@ -126,7 +126,7 @@ createApp({
         modalChoice?.hide();
         Object.assign(form, s);
         
-         form.gender = s.gender === 'Мужской' ? 'male' : 'female';
+         form.gender = s.gender === 'м' ? 'male' : 'female';
         emailError.value = '';
         phoneError.value = '';
         if (!modalEdit) {

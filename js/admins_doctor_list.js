@@ -66,7 +66,7 @@ createApp({
       if (filters.specialty) params.append('specialty', filters.specialty);
     
 
-      const res = await fetch(`http://192.168.1.207:8080/api/staff?${params}`);
+      const res = await fetch(`http://192.168.1.207:8080/api/staff-doctors?${params}`);
       staff.value = await res.json();
     }
 
@@ -111,7 +111,7 @@ createApp({
         isSwitchingModals.value = true;
             modalChoice?.hide();
             Object.assign(form, s);   
-            form.gender = s.gender === 'Мужской' ? 'male' : 'female';
+            form.gender = s.gender === 'м' ? 'male' : 'female';
             form.specialty = Array.isArray(s.specialty)
             ? s.specialty
             : String(s.specialty).split(',').map(Number);

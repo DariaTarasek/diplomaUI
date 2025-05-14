@@ -8,12 +8,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const rawValue = input.value.trim();
 
-    // Проверка номера (нач. с 7, 11 символов)
-    const digits = phoneInput.value.replace(/\D/g, '');
-    const isPhone = digits.length === 11 && /^[7]/.test(digits);
+    // Проверка Email
+    const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(rawValue);
 
-    if (!isPhone) {
-        loginError.textContent = 'Введите корректный номер телефона'
+    if (!isEmail) {
+        loginError.textContent = 'Введите корректный email'
       return;
     } else {
         loginError.textContent = ''
@@ -21,11 +20,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const data = {
       contact: rawValue,
-      type: 'phone',
+      type: 'email',
     };
 
     try {
-      const response = await fetch('/api/password-recovery', {
+      const response = await fetch('/api/emaployee-password-recovery', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -34,7 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
       });
 
       if (response.ok) {
-        alert('На указанный номер отправлен код восстановления пароля.');
+        alert('На указанный email отправлен код восстановления пароля.');
       } else {
         alert('Ошибка на сервере. Попробуйте позже.');
       }

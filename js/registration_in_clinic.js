@@ -8,6 +8,40 @@ document.addEventListener("DOMContentLoaded", function () {
   const firstNameError = document.getElementById('firstNameError');
   const secondNameError = document.getElementById('secondNameError');
 
+  const button = document.getElementById('profile-button');
+  const popover = document.getElementById('profile-popover');
+  const popoverUsername = document.getElementById('popover-username');
+
+  // Фетчим имя пользователя
+  fetch('http://192.168.1.207:8080/api/admin-data') // ← замени на актуальный URL API
+    .then(response => {
+      if (!response.ok) throw new Error("Ошибка при получении данных");
+      return response.json();
+    })
+    .then(data => {
+      const fullName = data.second_name + " " + data.first_name || "Неизвестный пользователь";
+      button.textContent = fullName;
+      popoverUsername.textContent = fullName;
+    })
+    .catch(error => {
+      console.error("Ошибка при загрузке имени пользователя:", error);
+      button.textContent = "Ошибка загрузки";
+      popoverUsername.textContent = "Ошибка загрузки";
+    });
+
+  // Открытие/закрытие поповера
+  button.addEventListener('click', () => {
+    popover.classList.toggle('d-none');
+  });
+
+  // Закрытие поповера при клике вне него
+  document.addEventListener('click', (event) => {
+    const profileArea = document.getElementById('admin-profile');
+    if (!profileArea.contains(event.target)) {
+      popover.classList.add('d-none');
+    }
+  });
+
   // Проверка даты 
   const dateInput = document.getElementById("birthDate");
   if (dateInput) {
@@ -253,6 +287,8 @@ document.addEventListener("DOMContentLoaded", function () {
       alert('Подтвердите номер телефона перед регистрацией.');
       return;
     }
+
+
 
     const formData = {
       second_name: form.elements['secondName'].value,

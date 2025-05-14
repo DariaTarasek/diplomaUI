@@ -36,10 +36,8 @@ createApp({
 
     const validatePhone = () => {
       if (errors.phone) {
-        //errors.phone = 'Введите полный 11-значный номер телефона.';
         return false;
       } else {
-       // errors.phone = '';
         return true;
       }
     };
@@ -94,7 +92,7 @@ createApp({
         return;
       }
 
-      if (!validatePhone() || !validateName()) return;
+      if (!validatePhone() || !validateFirstName() || !validateSecondName) return;
 
 const phoneInput = document.getElementById('phone');
 if (phoneInput) {

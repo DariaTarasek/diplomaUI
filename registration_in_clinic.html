@@ -19,7 +19,7 @@
         <header class="bg-white"> 
             <div class="container"> 
                 <div class="align-items-center bg-white gx-2 pb-0 pt-3 py-3 row"> 
-                    <div class="col"> <a class="align-items-center d-inline-flex fw-bold h4 mb-0 navbar-brand text-uppercase"> <svg version="1.0" xmlns="http://www.w3.org/2000/svg" xml:space="preserve" viewBox="0 0 100 100" width="2.5em" height="2.5em" class="me-1 text-primary" fill="currentColor">
+                    <div class="col"> <a class="align-items-center d-inline-flex fw-bold h4 mb-0 navbar-brand text-uppercase" href="administrator_account.html"> <svg version="1.0" xmlns="http://www.w3.org/2000/svg" xml:space="preserve" viewBox="0 0 100 100" width="2.5em" height="2.5em" class="me-1 text-primary" fill="currentColor">
                                 <path d="M90 42.301 76.666 19.209l-13.334 7.699V10H36.667v16.908l-13.335-7.699L10 42.301 23.332 50 10 57.698l13.331 23.093 13.335-7.698V90h26.666V73.093l13.334 7.698L90 57.698 76.666 50 90 42.301zm-9.107 17.84-6.666 11.543-17.561-10.138v21.787H43.332V61.546L25.774 71.684l-6.666-11.543L36.667 50 19.108 39.863l6.666-11.549 17.558 10.14V16.667h13.334v21.787l17.561-10.14 6.666 11.549L63.332 50l17.561 10.141z"/>
                             </svg><span>НАЗВАНИЕ</span></a> 
                     </div>                     
@@ -39,7 +39,18 @@
                                 </div> </a> 
                         </div>                         
                     </div>
-                    <div class="col-auto"> <a class="btn btn-primary" href="auth.html" role="button">Личный кабинет</a> 
+                    <div class="col-auto">
+                        <!-- Имя пользователя и поповер управления профилем -->
+                        <div id="admin-profile" class="position-relative">
+                            <button id="profile-button" class="btn btn-primary" type="button">
+                                Загрузка...
+</button>
+                            <div id="profile-popover" class="card shadow-sm position-absolute p-3 d-none" style="top: 60px; right: 0; z-index: 1050; min-width: 200px;">
+                                <div class="fw-bold mb-2" id="popover-username">Загрузка...</div>
+                                <div class="d-grid gap-2"><a href="administrator_profile.html" class="btn btn-outline-primary btn-sm">Управление профилем</a><a href="auth_doc.html" class="btn btn-outline-danger btn-sm">Выйти</a>
+                                </div>
+                            </div>
+                        </div>
                     </div>                     
                 </div>
                 <hr class="mb-0"> 
@@ -86,7 +97,7 @@
                         </script>
                     </div>
                 </div>
-                <div class="bg-light   container d-flex justify-content-center mx-auto w-50 mb-3">
+                <div class="bg-light container d-flex justify-content-center mx-auto w-50 mb-3">
                     <div class="bg-light container d-flex justify-content-center mx-auto w-50">
                         <form id="registrationForm" class="mx-auto" style="max-width: 500px;">
                             <h3 class="bg-light fw-semibold h3 text-center text-primary mt-3">Зарегистрировать нового пациента</h3>

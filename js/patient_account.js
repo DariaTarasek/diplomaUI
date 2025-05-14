@@ -38,7 +38,8 @@ createApp({
   },
   methods: {
     fetchPatientData() {
-      fetch('http://192.168.1.207:8080/api/patient-data')
+      fetch('http://192.168.1.207:8080/api/patient-data', {method: "GET",
+      credentials: "include"})
         .then(res => {
           if (!res.ok) throw new Error('Ошибка загрузки');
           return res.json();

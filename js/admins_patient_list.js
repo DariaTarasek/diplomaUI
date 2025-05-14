@@ -228,7 +228,7 @@ createApp({
 
         Object.assign(form, selectedPatient.value); // копируем данные пациента
 
-         form.gender = selectedPatient.value.gender === 'Мужской' ? 'male' : 'female';
+         form.gender = selectedPatient.value.gender === 'м' ? 'male' : 'female';
          console.log(selectedPatient.value.birthDate);
 
          //  Преобразование даты из ДД.ММ.ГГГГ в ГГГГ-MM-ДД

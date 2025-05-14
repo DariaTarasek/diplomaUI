@@ -271,8 +271,6 @@ try {
         }))
     };
 
-    // ... отправка и прочее остаются без изменений ...
-
 
             const res = await fetch(`http://192.168.1.207:8080/api/visits`, {
                 method: 'POST',
@@ -282,7 +280,7 @@ try {
 
             if (!res.ok) throw new Error('Ошибка при сохранении приема');
 
-            // Сохраняем новые аллергии
+    
             if (this.newAllergies.length > 0) {
                 await fetch(`http://192.168.1.207:8080/api/patients/${this.patient.id}/allergies`, {
                     method: 'POST',
@@ -291,7 +289,7 @@ try {
                 });
             }
 
-            // Сохраняем хроники
+    
             if (this.newChronics.length > 0) {
                 await fetch(`http://192.168.1.207:8080/api/patients/${this.patient.id}/chronics`, {
                     method: 'POST',
@@ -301,7 +299,7 @@ try {
             }
 
             alert('Прием сохранен');
-            window.location.href = '/doctor/schedule';
+            window.location.href = '/doctor_account.html';
 
         } catch (err) {
             console.error(err);

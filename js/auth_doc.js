@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     if (response.ok) {
-        window.location.href = "/index.html";
+        window.location.href = "#";
     } else {
         alert("Ошибка входа");
     }
