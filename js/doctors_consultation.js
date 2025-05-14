@@ -17,7 +17,8 @@ createApp({
         surname: '',
         birthDate: '',
         gender: '',
-        allergies: []
+        allergies: [],
+        chronics: []
       },
       doctor: {
         first_name: '',
@@ -25,6 +26,9 @@ createApp({
       },
       newAllergy: '',
       newAllergies: [],
+      newChronic: '',
+      newChronics: [],
+
       history: [],
       currentVisit: {
         complaints: '',
@@ -35,6 +39,7 @@ createApp({
 
       services: [],
       materials: [],
+      selectedMaterialIds: [],
       serviceSearch: '',
       materialSearch: '',
       materialQuantities: {},
@@ -63,6 +68,12 @@ createApp({
 
       return serviceTotal + materialTotal;
     },
+    selectedServicesDetails() {
+        return this.services.filter(s => this.currentVisit.selectedServices.includes(s.id));
+    },
+selectedMaterials() {
+    return this.materials.filter(m => this.selectedMaterialIds.includes(m.id));
+    },
       accountName() {
         return [
             this.doctor.first_name,
@@ -84,6 +95,12 @@ createApp({
         );
     },
 
+  combinedAllergies() {
+    return [...this.patient.allergies, ...this.newAllergies];
+  },
+  combinedChronics() {
+    return [...this.patient.chronics, ...this.newChronics];
+  },
   },
 
   methods: {
@@ -94,7 +111,9 @@ createApp({
         try {
             const res = await fetch(`http://192.168.1.207:8080/api/appointments/${appointmentId}`);
             const data = await res.json();
-            this.patient = data.patient;
+            this.patient = data.patient || {};
+            this.patient.allergies = this.patient.allergies || [];
+            this.patient.chronics = this.patient.chronics || [];
             this.history = data.history || [];
         } catch (err) {
             console.error('Ошибка загрузки пациента:', err);
@@ -121,7 +140,7 @@ createApp({
             }
 
             this.materials.forEach(mat => {
-            this.materialQuantities[mat.id] = 0;
+                this.materialQuantities[mat.id] = 0;
             });
 
         } catch (err) {
@@ -143,7 +162,39 @@ createApp({
           console.error('Ошибка при получении данных:', err);
         });
     },
+      toggleMaterial(mat) {
+    if (this.materialQuantities[mat.id] > 0) {
+      this.materialQuantities[mat.id] = 0;
 
+    } else {
+      this.materialQuantities[mat.id] = 1;
+
+    }
+  },
+  isMaterialSelected(id) {
+    return this.materialQuantities[id] > 0;
+  },
+
+  removeService(id) {
+  this.currentVisit.selectedServices = this.currentVisit.selectedServices.filter(sid => sid !== id);
+},
+removeNewAllergyByValue(allergy) {
+  this.newAllergies = this.newAllergies.filter(a => a !== allergy);
+},
+ removeNewChronicByValue(chronic) {
+    this.newChronics = this.newChronics.filter(c => c !== chronic);
+  },
+onMaterialToggle(mat) {
+    if (this.selectedMaterialIds.includes(mat.id)) {
+        this.materialQuantities[mat.id] = 1;
+    } else {
+        this.materialQuantities[mat.id] = 0;
+  }
+  },
+  removeMaterial(id) {
+    this.selectedMaterialIds = this.selectedMaterialIds.filter(mid => mid !== id);
+    this.materialQuantities[id] = 0;
+  },
 
     addNewAllergy() {
         const trimmed = this.newAllergy.trim();
@@ -156,7 +207,17 @@ createApp({
     removeNewAllergy(index) {
         this.newAllergies.splice(index, 1);
     },
-
+    addNewChronic() {
+        const trimmed = this.newChronic.trim();
+        if (
+            trimmed &&
+            !this.patient.chronics.includes(trimmed) &&
+            !this.newChronics.includes(trimmed)
+        ) {
+            this.newChronics.push(trimmed);
+            this.newChronic = '';
+        }
+     },
      togglePopover() {
             this.isPopoverVisible = !this.isPopoverVisible;
         },
@@ -169,41 +230,79 @@ createApp({
         },
 
     async submitVisit() {
-        try {
-            const selectedMaterials = Object.entries(this.materialQuantities)
-            .filter(([, qty]) => qty > 0)
-            .map(([id, qty]) => ({
-                id: Number(id),
-                quantity: qty
-            }));
+        const errors = [];
 
-            const payload = {
-            patient_id: this.patient.id,
-            complaints: this.currentVisit.complaints,
-            diagnosis: this.currentVisit.diagnosis,
-            treatment: this.currentVisit.treatment,
-            manipulations: this.currentVisit.selectedServices,
-            materials: selectedMaterials
-            };
+        if (!this.currentVisit.complaints.trim()) {
+            errors.push('Заполните поле "Жалобы".');
+        }
+        if (!this.currentVisit.diagnosis.trim()) {
+            errors.push('Заполните поле "Диагноз".');
+        }
+        if (!this.currentVisit.treatment.trim()) {
+            errors.push('Заполните поле "Лечение".');
+        }
+        if (this.currentVisit.selectedServices.length === 0) {
+            errors.push('Выберите хотя бы одну услугу.');
+        }
+
+        for (const materialId of this.selectedMaterialIds) {
+    const qty = this.materialQuantities[materialId];
+    if (!Number.isInteger(qty) || qty <= 0) {
+        errors.push('Количество для выбранных материалов должно быть больше 0');
+        break;
+    }
+}
+
+if (errors.length) {
+    alert('Пожалуйста, исправьте ошибки:\n\n' + errors.join('\n'));
+    return;
+}
+
+try {
+    const payload = {
+        patient_id: this.patient.id,
+        complaints: this.currentVisit.complaints,
+        diagnosis: this.currentVisit.diagnosis,
+        treatment: this.currentVisit.treatment,
+        manipulations: this.currentVisit.selectedServices,
+        materials: this.selectedMaterialIds.map(id => ({
+            id,
+            quantity: this.materialQuantities[id]
+        }))
+    };
+
+    // ... отправка и прочее остаются без изменений ...
+
 
             const res = await fetch(`http://192.168.1.207:8080/api/visits`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
             });
 
             if (!res.ok) throw new Error('Ошибка при сохранении приема');
 
+            // Сохраняем новые аллергии
             if (this.newAllergies.length > 0) {
-            await fetch(`http://192.168.1.207:8080/api/patients/${this.patient.id}/allergies`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ allergies: this.newAllergies })
-            });
-        }
+                await fetch(`http://192.168.1.207:8080/api/patients/${this.patient.id}/allergies`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ allergies: this.newAllergies })
+                });
+            }
+
+            // Сохраняем хроники
+            if (this.newChronics.length > 0) {
+                await fetch(`http://192.168.1.207:8080/api/patients/${this.patient.id}/chronics`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ chronics: this.newChronics })
+                });
+            }
 
             alert('Прием сохранен');
             window.location.href = '/doctor/schedule';
+
         } catch (err) {
             console.error(err);
             alert('Ошибка при сохранении.');
@@ -215,6 +314,7 @@ createApp({
 
   mounted() {
     this.loadData();
+    this.fetchDoctorData();
     document.addEventListener('click', this.handleClickOutside);
   }
 }).mount('#app');

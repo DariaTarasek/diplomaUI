@@ -33,8 +33,7 @@
                                             <div class="mb-1 small text-black-50">Связаться с нами</div>
                                             <div class="mb-1 small text-black-50"></div>
                                             <div class="fw-bold">+7(000) 000 00 00</div>
-                                        </div> </a>
-                                    <a class="align-items-center d-inline-flex gap-2 lh-1 text-decoration-none"> <span class="bg-primary lh-1 p-2 rounded text-white"> <svg viewBox="0 0 24 24" fill="currentColor" width="1.25em" height="1.25em"> 
+                                        </div> </a><a class="align-items-center d-inline-flex gap-2 lh-1 text-decoration-none"> <span class="bg-primary lh-1 p-2 rounded text-white"> <svg viewBox="0 0 24 24" fill="currentColor" width="1.25em" height="1.25em"> 
                                                 <path d="M18.364 17.364L12 23.728l-6.364-6.364a9 9 0 1 1 12.728 0zM12 13a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"/> 
                                             </svg> </span> <div class="d-lg-block d-none">
                                             <div class="mb-1 small text-black-50">Адрес</div>
@@ -70,8 +69,7 @@
                     <div class="container"> 
                         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarToggler11" aria-controls="" aria-expanded="false" aria-label="Toggle navigation"> <span class="navbar-toggler-icon"></span> 
                         </button>
-                        <div class="d-flex justify-content-center align-items-center flex-wrap w-100 ">
-                            <a id="doctor_profile" role="button" class="border-white btn btn-outline-light fs-3 text-primary w-50" href="doctor_account.html">Личный кабинет</a>
+                        <div class="d-flex justify-content-center align-items-center flex-wrap w-100 "><a id="doctor_profile" role="button" class="border-white btn btn-outline-light fs-3 text-primary w-50" href="doctor_account.html">Личный кабинет</a>
                         </div>                         
                     </div>                     
                 </nav>                 
@@ -80,103 +78,123 @@
                 <div class="align-items-center flex-wrap w-100 mt-3">
                     <h3 class="mb-3 text-center">Проведение приема</h3>
                 </div>
-                <div id="app" class="container py-4">
-                    <div class="card p-4">
-                        <ul class="nav nav-tabs mb-3">
-                            <li class="nav-item" v-for="tab in tabs" :key="tab.id">
-                                <button class="nav-link" :class="{ active: activeTab === tab.id }" @click="activeTab = tab.id">
-                                    {{ tab.label }}
+                <div class="container py-4">
+                    <!-- Tabs -->
+                    <ul class="nav nav-tabs mb-4">
+                        <li class="nav-item" v-for="tab in tabs" :key="tab.id">
+                            <button class="nav-link" :class="{ active: activeTab === tab.id }" @click="activeTab = tab.id">
+                                {{ tab.label }}
 </button>
-                            </li>
-                        </ul>
-                        <!-- Вкладка 1: Пациент -->
-                        <div v-if="activeTab === 'patient'">
-                            <h5>Информация о пациенте</h5>
-                            <p><strong>ФИО:</strong> {{ fullName }}</p>
-                            <p><strong>Пол:</strong> {{ patient.gender }}</p>
-                            <p><strong>Дата рождения:</strong> {{ patient.birth_date }} ({{ patientAge }} лет)</p>
-                            <div>
-                                <h6>Известные аллергии:</h6>
-                                <ul>
-                                    <li v-for="a in patient.allergies" :key="'existing-' + a">{{ a }}</li>
-                                </ul>
-                                <h6>Новые аллергии:</h6>
-                                <ul>
-                                    <li v-for="(a, index) in newAllergies" :key="'new-' + index" class="d-flex align-items-center mb-2">
-                                        <input v-model="newAllergies[index]" type="text" class="form-control me-2 w-25"/><i class="bi bi-x-circle text-danger cursor-pointer" @click="removeNewAllergy(index)" style="font-size: 1.2rem;" title="Удалить"></i>
-                                    </li>
-                                </ul>
-                                <div class="d-flex mt-2">
-                                    <input type="text" v-model="newAllergy" @keyup.enter="addNewAllergy" placeholder="Добавить аллергию" class="form-control me-2 w-25"/>
-                                    <button @click="addNewAllergy" class="btn btn-primary">Добавить</button>
+                        </li>
+                    </ul>
+                    <!-- Пациент -->
+                    <div v-if="activeTab === 'patient'">
+                        <h5 class="mb-3">Информация о пациенте</h5>
+                        <p><strong>ФИО:</strong> {{ fullName }}</p>
+                        <p><strong>Пол:</strong> {{ patient.gender }}</p>
+                        <p><strong>Дата рождения:</strong> {{ patient.birthDate }} ({{ patientAge }} лет)</p>
+                        <!-- Аллергии -->
+                        <h6>Аллергии</h6>
+                        <div class="d-flex flex-wrap mb-2"><span class="badge fs-6 mb-2 me-2  bg-light text-black" :class="newAllergies.includes(a) ? 'bg-outline-primary text-primary' : 'bg-light text-black'" v-for="(a, i) in combinedAllergies" :key="'a-' + i">
+                            {{ a }} <i v-if="newAllergies.includes(a)" class="bi bi-x ms-1" @click="removeNewAllergyByValue(a)" role="button"></i> </span>
+                        </div>
+                        <div class="input-group w-50 mb-3">
+                            <input v-model="newAllergy" class="form-control" placeholder="Добавить аллергию" @keyup.enter="addNewAllergy"/>
+                            <button class="btn btn-outline-primary" @click="addNewAllergy">Добавить</button>
+                        </div>
+                        <!-- Хронические заболевания -->
+                        <h6>Хронические заболевания</h6>
+                        <div class="d-flex flex-wrap mb-2"><span class="badge fs-6 mb-2 me-2 bg-light text-black" :class="newChronics.includes(c) ? 'bg-outline-primary text-primary' : 'bg-light text-black'" v-for="(c, i) in combinedChronics" :key="'c-' + i">
+                        {{ c }} <i v-if="newChronics.includes(c)" class="bi bi-x ms-1" @click="removeNewChronicByValue(c)" role="button"></i> </span>
+                        </div>
+                        <div class="input-group w-50 mb-3">
+                            <input v-model="newChronic" class="form-control" placeholder="Добавить хронику" @keyup.enter="addNewChronic"/>
+                            <button class="btn btn-outline-primary" @click="addNewChronic">Добавить</button>
+                        </div>
+                    </div>
+                    <!-- Анамнез -->
+                    <div v-if="activeTab === 'history'">
+                        <h5 class="mb-3">Анамнез</h5>
+                        <table class="table table-sm table-bordered">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Дата</th>
+                                    <th>Диагноз</th>
+                                    <th>Лечение</th>
+                                    <th>Врач</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="visit in history" :key="visit.id">
+                                    <td>{{ visit.date }}</td>
+                                    <td>{{ visit.diagnosis }}</td>
+                                    <td>{{ visit.treatment }}</td>
+                                    <td>{{ visit.doctor }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- Прием -->
+                    <div v-if="activeTab === 'current'">
+                        <h5 class="mb-3">Текущий прием</h5>
+                        <div class="mb-3">
+                            <label class="form-label">Жалобы</label>
+                            <textarea v-model="currentVisit.complaints" class="form-control" rows="2"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Диагноз</label>
+                            <textarea v-model="currentVisit.diagnosis" class="form-control" rows="2"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Лечение</label>
+                            <textarea v-model="currentVisit.treatment" class="form-control" rows="2"></textarea>
+                        </div>
+                        <div v-if="currentVisit.selectedServices.length" class="mb-4">
+                            <h6>Выбранные услуги:</h6>
+                            <div class="d-flex flex-wrap gap-2">
+                                <div v-for="service in selectedServicesDetails" :key="service.id" class="align-items-center badge bg-primary d-flex fs-6 p-2">
+                                    {{ service.name }}<i class="bi bi-x ms-2" role="button" @click="removeService(service.id)"></i>
                                 </div>
                             </div>
                         </div>
-                        <!-- Вкладка 2: Анамнез -->
-                        <div v-if="activeTab === 'history'">
-                            <h5>Анамнез</h5>
-                            <table class="table">
-                                <thead>
-                                    <tr>
-                                        <th>Дата</th>
-                                        <th>Диагноз</th>
-                                        <th>Лечение</th>
-                                        <th>Врач</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr v-for="visit in history" :key="visit.id">
-                                        <td>{{ visit.date }}</td>
-                                        <td>{{ visit.diagnosis }}</td>
-                                        <td>{{ visit.treatment }}</td>
-                                        <td>{{ visit.doctor }}</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                        <!-- Вкладка 3: Прием -->
-                        <div v-if="activeTab === 'current'">
-                            <h5>Текущий прием</h5>
-                            <div class="mb-3">
-                                <label>Жалобы:</label>
-                                <textarea v-model="currentVisit.complaints" class="form-control" rows="2"></textarea>
-                            </div>
-                            <div class="mb-3">
-                                <label>Диагноз:</label>
-                                <textarea v-model="currentVisit.diagnosis" class="form-control" rows="2"></textarea>
-                            </div>
-                            <div class="mb-3">
-                                <label>Лечение:</label>
-                                <textarea v-model="currentVisit.treatment" class="form-control" rows="2"></textarea>
-                            </div>
-                            <div class="mb-3">
-                                <label>Проведенные услуги:</label>
-                                <input type="text" v-model="serviceSearch" class="form-control mb-2 w-50" placeholder="Поиск услуги..."/>
-                                <div style="max-height: 200px; overflow-y: auto;" class="border rounded p-2">
-                                    <div v-for="service in filteredServices" :key="service.id" class="form-check">
-                                        <input class="form-check-input" type="checkbox" :value="service.id" v-model="currentVisit.selectedServices" :id="'service-' + service.id"/>
-                                        <label class="form-check-label" :for="'service-' + service.id">
-                                            {{ service.name }}
+                        <div class="mb-3">
+                            <label class="form-label">Проведенные услуги</label>
+                            <input type="text" v-model="serviceSearch" class="form-control mb-2 w-50" placeholder="Поиск услуги..."/>
+                            <div class="border rounded p-2" style="max-height: 200px; overflow-y: auto;">
+                                <div class="form-check" v-for="service in filteredServices" :key="service.id">
+                                    <input class="form-check-input" type="checkbox" :value="service.id" v-model="currentVisit.selectedServices" :id="'service-' + service.id"/>
+                                    <label class="form-check-label" :for="'service-' + service.id">
+                                        {{ service.name }}
 </label>
-                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <!-- Вкладка 4: Расходные материалы -->
-                        <div v-if="activeTab === 'materials'">
-                            <h5>Расходные материалы</h5>
-                            <input type="text" v-model="materialSearch" class="form-control mb-2 w-50" placeholder="Поиск материала..."/>
-                            <div style="max-height: 200px; overflow-y: auto;" class="border rounded p-2">
-                                <div v-for="material in filteredMaterials" :key="material.id" class="mb-3">
-                                    <label>{{ material.name }}:</label>
-                                    <input type="number" min="0" class="form-control w-25" v-model.number="materialQuantities[material.id]"/>
-                                </div>
+                    </div>
+                    <!-- Материалы -->
+                    <div v-if="activeTab === 'materials'">
+                        <h6>Материалы</h6>
+                        <input type="text" v-model="materialSearch" class="form-control w-50 mb-3" placeholder="Поиск материала..."/>
+                        <div class="border rounded p-2 mb-3" style="max-height: 200px; overflow-y: auto;">
+                            <div class="form-check" v-for="mat in filteredMaterials" :key="mat.id">
+                                <input class="form-check-input" type="checkbox" :id="'material-' + mat.id" :value="mat.id" v-model="selectedMaterialIds" @change="onMaterialToggle(mat)"/>
+                                <label class="form-check-label" :for="'material-' + mat.id">{{ mat.name }}</label>
                             </div>
                         </div>
-                        <!-- Кнопка сохранения -->
-                        <div class="mt-4 text-end" v-if="activeTab === 'materials'">
-                            <button class="btn btn-primary" @click="submitVisit">Сохранить прием</button>
+                        <!-- Выбранные -->
+                        <div v-if="selectedMaterials.length" class="border p-3 rounded" style="max-height: 200px; overflow-y: auto;">
+                            <div v-for="mat in selectedMaterials" :key="'sel-' + mat.id" class="mb-2" style="display: flex; align-items: center; margin-bottom: 8px;">
+                                <div style="width: 200px; flex-shrink: 0;">
+                                    {{ mat.name }}
+</div>
+                                <input type="number" class="form-control d-inline-block ms-2" min="1" style="width: 10%" v-model.number="materialQuantities[mat.id]"/>
+                                <button class="btn btn-sm btn-outline-danger ms-2" @click="removeMaterial(mat.id)">Удалить</button>
+                            </div>
                         </div>
+                    </div>
+                    <!-- сохранение -->
+                    <div class="mt-4 d-flex justify-content-between align-items-center">
+                        <button class="btn btn-primary" @click="submitVisit" v-if="activeTab === 'materials'"> Сохранить прием
+</button>
                     </div>
                 </div>
                 <!-- Vue 3 -->
