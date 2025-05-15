@@ -24,7 +24,7 @@ document.addEventListener("DOMContentLoaded", () => {
           li.className = "d-flex justify-content-between border-bottom py-2";
 
           li.innerHTML = `
-            <span>${service.title}</span>
+            <span>${service.name}</span>
             <span>${service.price}₽</span>
           `;
           ul.appendChild(li);

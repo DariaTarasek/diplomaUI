@@ -79,6 +79,9 @@
             <main> 
                 <div class="container my-4">
                     <h2 class="text-center mb-3">Список врачей</h2>
+                    <div class="mb-3 text-center">
+                        <a class="btn btn-primary bi-plus-lg" href="employee_registration.html"> Добавить нового сотрудника</a>
+                    </div>
                     <div class="row mb-3">
                         <div class="col-md-4">
                             <input v-model="search" @input="loadStaff" class="form-control" placeholder="Поиск по ФИО или email">
@@ -192,9 +195,9 @@
                                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                 </div>
                                 <div class="modal-body">
-                                    <button class="btn btn-primary w-100 mb-2" @click="openEdit(selectedDoctor)">Редактировать личные данные</button>
-                                    <button class="btn btn-primary w-100 mb-2" @click="openLoginChange">Изменить логин</button>
-                                    <button class="btn btn-danger w-100 mb-2" @click="deleteDoctor">
+                                    <button class="btn btn-primary w-100 mb-2 bi-pencil" @click="openEdit(selectedDoctor)"> Редактировать личные данные</button>
+                                    <button class="btn btn-primary w-100 mb-2 bi-pencil-square" @click="openLoginChange"> Изменить логин</button>
+                                    <button class="btn btn-danger w-100 mb-2 bi-x-circle" @click="deleteDoctor"> 
                                         Удалить пользователя
 </button>
                                 </div>

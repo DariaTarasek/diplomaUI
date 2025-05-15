@@ -1,11 +1,7 @@
 document.addEventListener("DOMContentLoaded", function () {
   const form = document.getElementById('registrationForm');
-  const password = form.password;
-  const passwordCheck = form.password_check;
   const email = form.email;
 
-  const passwordError = document.getElementById('passwordError');
-  const passwordCheckError = document.getElementById('passwordCheckError');
   const emailError = document.getElementById('emailError');
   const specError = document.getElementById('specError');
 
@@ -71,35 +67,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     phoneInput.addEventListener('input', validatePhone);
 
-
-
-  // Проверка силы пароля
-  function validatePassword() {
-    const isValid = /^(?=.*[a-zA-Z])(?=.*\d).{8,}$/.test(password.value);
-    if (!isValid) {
-        password.classList.add('is-invalid');
-        passwordError.textContent = 'Пароль должен быть не менее 8 символов и содержать латинские буквы и цифры.';
-    } else {
-        password.classList.remove('is-invalid');
-        passwordError.textContent = '';
-    }
-  }
-
-  // Проверка совпадения паролей
-  function validatePasswordMatch() {
-    if (passwordCheck.value === '') {
-      passwordCheckError.textContent = '';
-      return;
-    }
-    if (password.value !== passwordCheck.value) {
-        passwordCheck.classList.add('is-invalid');
-      passwordCheckError.textContent = 'Пароли не совпадают';
-    } else {
-        passwordCheck.classList.remove('is-invalid');
-      passwordCheckError.textContent = '';
-    }
-  }
-
   // Проверка email
   function validateEmail() {
     const value = email.value.trim();
@@ -117,10 +84,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
-  password.addEventListener('input', () => {
-    validatePassword();
-    validatePasswordMatch();
-  });
 
   container.addEventListener('change', () => {
     const selectedSpecs = container.querySelectorAll('input[name="specializations"]:checked');
@@ -131,7 +94,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }
     });
 
-  passwordCheck.addEventListener('input', validatePasswordMatch);
   email.addEventListener('input', validateEmail);
 
   firstName.addEventListener('input', () => {
@@ -160,14 +122,10 @@ document.addEventListener("DOMContentLoaded", function () {
     const isFirstNameValid = firstName.value.trim().length > 0;
     const isSecondNameValid = secondName.value.trim().length > 0;
 
-    validatePassword();
-    validatePasswordMatch();
     validateEmail();
     validatePhone();
 
     if (
-      passwordError.textContent ||
-      passwordCheckError.textContent ||
       emailError.textContent || 
       phoneError.textContent || 
       !isFirstNameValid ||
@@ -193,7 +151,6 @@ document.addEventListener("DOMContentLoaded", function () {
       gender: form.gender.value,
       phone: form.phone.value,
       email: form.email.value,
-      password: form.password.value,
       role: form.role.value,
     };
 
@@ -212,11 +169,16 @@ document.addEventListener("DOMContentLoaded", function () {
     })
       .then(response => {
         if (response.ok) {
-          alert('Регистрация прошла успешно!');
-          window.location.href = "/administrator_account.html"
-        } else {
-          alert('Ошибка регистрации.');
-        }
+            alert('Регистрация прошла успешно!');
+            if (formData.role === "doctor") {
+                window.location.href = "/admins_doctor_list.html"
+            }
+            else {
+            window.location.href = "/admins_admin_list.html"
+            }
+            } else {
+            alert('Ошибка регистрации.');
+            }
       })
       .catch(error => {
         console.error('Ошибка:', error);

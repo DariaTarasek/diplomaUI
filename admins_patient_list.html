@@ -79,6 +79,8 @@
             <main> 
                 <div class="container my-4">
                     <h2 class="mb-3 text-center">Список пациентов</h2>
+                    <div class="mb-3 text-center"><a class="btn btn-primary bi-plus-lg" href="registration_in_clinic.html"> Зарегистрировать нового пациента</a>
+                    </div>
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <input v-model="search" @input="loadPatients" class="form-control" placeholder="Поиск по ФИО или телефону">
@@ -166,9 +168,9 @@
                                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                 </div>
                                 <div class="modal-body">
-                                    <button class="btn btn-primary w-100 mb-2" @click="openEdit(selectedPatient)">Редактировать личные данные</button>
-                                    <button class="btn btn-primary w-100 mb-2" @click="openLoginChange">Изменить логин (телефон)</button>
-                                    <button v-if="userRole === 'superadmin'" class="btn btn-danger w-100 mb-2" @click="deletePatient">
+                                    <button class="btn btn-primary w-100 mb-2 bi-pencil" @click="openEdit(selectedPatient)"> Редактировать личные данные</button>
+                                    <button class="btn btn-primary w-100 mb-2 bi-pencil-square" @click="openLoginChange"> Изменить логин (телефон)</button>
+                                    <button v-if="userRole === 'superadmin'" class="btn btn-danger w-100 mb-2 bi-x-circle" @click="deletePatient"> 
                                         Удалить пользователя
 </button>
                                 </div>
@@ -198,8 +200,8 @@
                                                 <label for="smsCode" class="form-label text-primary">Код подтверждения</label>
                                                 <input type="text" id="smsCode" class="form-control" v-model="smsCode" placeholder="Введите код">
                                                 <div class="d-flex flex-wrap gap-3">
-                                                    <button type="button" class="btn btn-primary mt-2 " @click="verifyCode">Подтвердить</button>
-                                                    <button type="button" class="btn btn-outline-primary mt-2" :disabled="resendButtonDisabled" @click="requestCode">
+                                                    <button type="button" class="btn btn-success mt-2 " @click="verifyCode">Подтвердить</button>
+                                                    <button type="button" class="btn btn-secondary mt-2" :disabled="resendButtonDisabled" @click="requestCode">
                                                         {{ resendButtonText }}
 </button>
                                                     <button type="button" class="btn btn-primary" v-if="codeSended" @click="resetPhoneConfirmation">Изменить номер</button>

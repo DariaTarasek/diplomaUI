@@ -54,7 +54,7 @@ createApp({
         const userData = await userRes.json();
         this.first_name = userData.first_name || '';
         this.second_name = userData.second_name || '';
-        this.userRole = userData.Role.role || '';
+        this.userRole = userData.role.role || '';
 
         await this.fetchServices();
         await this.fetchMaterials();
@@ -223,7 +223,7 @@ createApp({
 
   resetNewItem() {
     this.newItem = {
-      title: '',
+      name: '',
       category_id: '',
       price: 0
     };

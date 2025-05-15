@@ -81,7 +81,7 @@
                     <h3 class="mb-3 text-center">Главная</h3>
                 </div>
                 <div class=" mb-3 text-center">
-                    <button class="btn btn-primary w-25" @click="openModal">Новая запись</button>
+                    <button class="btn btn-primary w-25 bi-plus-lg" @click="openModal"> Новая запись</button>
                 </div>
                 <div class="container py-3">
                     <div class="row justify-content-center">
@@ -266,8 +266,8 @@
                                 <p><strong>Дата и время:</strong> {{ selectedAppt?.day.date + ",  " +  selectedAppt?.time }}</p>
                             </div>
                             <div class="d-flex justify-content-between mt-4">
-                                <button class="btn btn-primary" @click="showTransferModal">Перенести запись</button>
-                                <button class="btn btn-danger" @click="confirmCancelAppointment">Отменить запись</button>
+                                <button class="btn btn-primary bi-calendar2" @click="showTransferModal"> Перенести запись</button>
+                                <button class="btn btn-danger bi-calendar-x" @click="confirmCancelAppointment"> Отменить запись</button>
                             </div>
                         </div>
                     </div>

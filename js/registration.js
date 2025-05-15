@@ -141,6 +141,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Функция для повторной отправки кода
   function startResendTimer() {
+    clearInterval(resendTimer);
     let seconds = 60;
     resendCodeBtn.disabled = true;
     resendCodeBtn.textContent = `Отправить код повторно (${seconds})`;
@@ -175,7 +176,8 @@ document.addEventListener("DOMContentLoaded", function () {
         return;
     }
 
-    // Если всё ок — отправляем запрос
+      requestCodeBtn.disabled = true;
+
     fetch('http://192.168.1.207:8080/api/request-code', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -192,12 +194,14 @@ document.addEventListener("DOMContentLoaded", function () {
         codeMessage.classList.add('text-success');
         startResendTimer();
         } else {
+        requestCodeBtn.disabled = false;
         codeMessage.textContent = 'Ошибка при отправке кода.';
         codeMessage.classList.remove('text-success');
         codeMessage.classList.add('text-danger');
         }
     })
     .catch(() => {
+         requestCodeBtn.disabled = false;
         codeMessage.textContent = 'Ошибка сети при отправке кода.';
         codeMessage.classList.remove('text-success');
         codeMessage.classList.add('text-danger');
@@ -272,6 +276,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Кнопка для изменения номера телефона
   changePhoneBtn.addEventListener('click', () => {
+    clearInterval(resendTimer); 
     phoneField.readOnly = false;
     verifiedPhoneNumber = '';
     phoneVerified = false;

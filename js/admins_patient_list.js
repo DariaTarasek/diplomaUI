@@ -122,7 +122,6 @@ createApp({
         const digits = form.phone.replace(/\D/g, '');
   const isValid = digits.length === 11 && digits.startsWith('7');
   requestButtonDisabled.value = !isValid;
-  console.log('Обновление кнопки: номер =', digits, 'валидный =', isValid, 'кнопка заблокирована =', requestButtonDisabled.value);
         }
 
 
@@ -190,35 +189,37 @@ createApp({
     }
 
     function startResendTimer() {
-    let seconds = 60;
-    resendButtonDisabled.value = true;
-    resendButtonText.value = `Отправить код повторно (${seconds})`;
-
-    resendTimer.value = setInterval(() => {
-        seconds--;
+        clearInterval(resendTimer.value);
+        let seconds = 60;
+        resendButtonDisabled.value = true;
         resendButtonText.value = `Отправить код повторно (${seconds})`;
 
-        if (seconds <= 0) {
-        clearInterval(resendTimer.value);
-        resendButtonDisabled.value = false;
-        resendButtonText.value = 'Отправить код повторно';
+        resendTimer.value = setInterval(() => {
+            seconds--;
+            resendButtonText.value = `Отправить код повторно (${seconds})`;
+
+            if (seconds <= 0) {
+            clearInterval(resendTimer.value);
+            resendButtonDisabled.value = false;
+            resendButtonText.value = 'Отправить код повторно';
+            }
+        }, 1000);
         }
-    }, 1000);
+
+        function resetPhoneConfirmation() {
+            clearInterval(resendTimer.value);
+            phoneVerified.value = false;
+            verifiedPhoneNumber.value = '';
+            smsCode.value = '';
+            codeMessage.value = '';
+            codeSectionVisible.value = false;
+            resendButtonDisabled.value = true;
+            resendButtonText.value = 'Отправить код повторно';
+
+            requestButtonDisabled.value = false;
+            phoneSectionDisabled.value = false;
+            codeSended.value = false;
     }
-
-    function resetPhoneConfirmation() {
-        phoneVerified.value = false;
-        verifiedPhoneNumber.value = '';
-        smsCode.value = '';
-        codeMessage.value = '';
-        codeSectionVisible.value = false;
-        resendButtonDisabled.value = true;
-        resendButtonText.value = 'Отправить код повторно';
-
-         requestButtonDisabled.value = false;
-        phoneSectionDisabled.value = false;
-        codeSended.value = false;
-}
 
 
 

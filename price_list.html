@@ -101,7 +101,7 @@
                                     </select>
                                 </div>
                                 <div class="mb-3 text-start" v-if="userRole === 'superadmin'">
-                                    <button class="btn btn-primary" @click="openAddModal">Добавить</button>
+                                    <button class="btn btn-primary bi-plus-lg" @click="openAddModal"> Добавить</button>
                                 </div>
                                 <!-- Список услуг -->
                                 <table class="table table-hover" v-if="activeTab === 'services'">
@@ -148,8 +148,8 @@
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" @click="closeServiceModal"></button>
                             </div>
                             <div class="modal-body">
-                                <button @click="startEditingService" class="btn btn-primary me-2">Редактировать</button>
-                                <button @click="confirmServiceDelete" class="btn btn-danger">Удалить</button>
+                                <button @click="startEditingService" class="btn btn-primary me-2 bi-pencil"> Редактировать</button>
+                                <button @click="confirmServiceDelete" class="btn btn-danger bi-x-circle">Удалить</button>
                             </div>
                         </div>
                     </div>
@@ -163,8 +163,8 @@
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" @click="closeMaterialModal"></button>
                             </div>
                             <div class="modal-body">
-                                <button @click="startEditingMaterial" class="btn btn-primary me-2">Редактировать</button>
-                                <button @click="confirmMaterialDelete" class="btn btn-danger">Удалить</button>
+                                <button @click="startEditingMaterial" class="btn btn-primary me-2 bi-pencil"> Редактировать</button>
+                                <button @click="confirmMaterialDelete" class="btn btn-danger bi-x-circle"> Удалить</button>
                             </div>
                         </div>
                     </div>

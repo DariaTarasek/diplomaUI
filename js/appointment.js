@@ -1,4 +1,4 @@
-const { createApp, ref, reactive, onMounted, computed, watch, nextTick } = Vue;
+const { createApp, ref, reactive, onMounted, onUnmounted, computed, watch, nextTick } = Vue;
 
 createApp({
   setup() {
@@ -164,16 +164,32 @@ const validateDateRange = () => {
 function handleClickOutside(event) {
             const popover = document.getElementById('patient-profile');
             if (popover && !popover.contains(event.target)) {
-                isPopoverVisible = false;
+                isPopoverVisible.value = false;
             }
         };
 
-    onMounted(() => {
+onMounted(() => {
       fetchSpecialties();
       loadPatientData();
       validateDateRange();
       document.addEventListener('click', handleClickOutside);
     });
+
+onUnmounted(() => {
+  if (handleClickOutside) {
+    document.removeEventListener('click', handleClickOutside);
+  }
+
+  const phoneInput = document.getElementById('phone');
+  if (maskInstance && maskInstance.destroy) {
+    maskInstance.destroy();
+    maskInstance = null;
+  }
+
+  if (phoneInput) {
+    delete phoneInput.dataset.masked;
+  }
+});
 
     
 watch(step, (newVal) => {
@@ -181,23 +197,26 @@ watch(step, (newVal) => {
     nextTick(() => {
       const phoneInput = document.getElementById('phone');
       if (phoneInput && !phoneInput.dataset.masked) {
-        const mask = IMask(phoneInput, {
+        maskInstance = IMask(phoneInput, {
           mask: '+{7} (000) 000-00-00'
         });
-        phoneInput.dataset.masked = "true"; // чтобы не маскировать повторно
-        mask.on('accept', () => {
-            const digits = mask.value.replace(/\D/g, '');
-            const valid = digits.length === 11 && digits.startsWith('7');
-            errors.phone = digits && !valid ? 'Неверный формат телефона' : '';
-          });
-          mask.on('complete', () => {
-  patient.phone = mask.value;
-  console.log("Телефон завершён:", patient.phone);
-});
+
+        phoneInput.dataset.masked = "true";
+
+        maskInstance.on('accept', () => {
+          const digits = maskInstance.value.replace(/\D/g, '');
+          const valid = digits.length === 11 && digits.startsWith('7');
+          errors.phone = digits && !valid ? 'Неверный формат телефона' : '';
+        });
+
+        maskInstance.on('complete', () => {
+          patient.phone = maskInstance.value;
+        });
       }
     });
   }
 });
+
 
 
 watch(() => patient.first_name, () => {

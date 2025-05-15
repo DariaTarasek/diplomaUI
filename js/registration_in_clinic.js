@@ -108,6 +108,7 @@ document.addEventListener("DOMContentLoaded", function () {
   let resendTimer;
 
   function startResendTimer() {
+    clearInterval(resendTimer);
     let seconds = 60;
     resendCodeBtn.disabled = true;
     resendCodeBtn.textContent = `Отправить код повторно (${seconds})`;
@@ -141,7 +142,8 @@ document.addEventListener("DOMContentLoaded", function () {
         return;
     }
 
-    
+    requestCodeBtn.disabled = true;
+
     fetch('http://192.168.1.207:8080/api/request-code', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -158,12 +160,14 @@ document.addEventListener("DOMContentLoaded", function () {
         codeMessage.classList.add('text-success');
         startResendTimer();
         } else {
+        requestCodeBtn.disabled = false;
         codeMessage.textContent = 'Ошибка при отправке кода.';
         codeMessage.classList.remove('text-success');
         codeMessage.classList.add('text-danger');
         }
     })
     .catch(() => {
+        requestCodeBtn.disabled = false;
         codeMessage.textContent = 'Ошибка сети при отправке кода.';
         codeMessage.classList.remove('text-success');
         codeMessage.classList.add('text-danger');
@@ -237,6 +241,7 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   changePhoneBtn.addEventListener('click', () => {
+    clearInterval(resendTimer);
     phoneField.readOnly = false;
     verifiedPhoneNumber = '';
     phoneVerified = false;
@@ -316,7 +321,7 @@ document.addEventListener("DOMContentLoaded", function () {
           codeInput.value = '';
           codeMessage.textContent = '';
           requestCodeBtn.disabled = false;
-          window.location.href = "/administrator_account.html"
+          window.location.href = "/admins_patient_list.html"
         } else {
           response.text().then(text => {
             alert('Ошибка регистрации: ' + text);
