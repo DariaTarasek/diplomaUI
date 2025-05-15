@@ -34,6 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if (response.ok) {
         alert('На указанный email отправлен код восстановления пароля.');
+        window.location.href = "/auth_doc.html"
       } else {
         alert('Ошибка на сервере. Попробуйте позже.');
       }

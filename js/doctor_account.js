@@ -17,12 +17,8 @@ createApp({
         completed: []
       },
       scheduleDates: [],
-      scheduleTimes: [
-        "09:00", "10:00", "11:00", "12:00",
-        "13:00", "14:00", "15:00", "16:00",
-        "17:00", "18:00"
-      ],
-     isPopoverVisible: false,
+      scheduleTimes: [],     
+      isPopoverVisible: false,
     };
   },
   computed: {
@@ -30,12 +26,7 @@ createApp({
       return [...this.data.today].sort((a, b) => a.time.localeCompare(b.time));
     },
     fullName() {
-        return [
-            this.first_name,
-            this.second_name
-        ]
-        .filter(Boolean)
-        .join(' ');
+      return [this.first_name, this.second_name].filter(Boolean).join(' ');
     }
   },
   methods: {
@@ -51,12 +42,23 @@ createApp({
           this.data.completed = json.completed || [];
           this.first_name = json.first_name;
           this.second_name = json.second_name;
-
-          this.scheduleDates = [...new Set(this.data.upcoming.map(x => x.date))];
-
         })
         .catch(err => {
-          console.error('Ошибка при получении данных:', err);
+          console.error('Ошибка при получении данных врача:', err);
+        });
+    },
+    fetchSchedule() {
+      fetch('http://192.168.1.207:8080/api/schedule-admin')
+        .then(res => {
+          if (!res.ok) throw new Error('Ошибка загрузки расписания');
+          return res.json();
+        })
+        .then(json => {
+          this.scheduleDates = json.days.map(d => d.date);
+          this.scheduleTimes = json.timeSlots || [];
+        })
+        .catch(err => {
+          console.error('Ошибка при получении расписания:', err);
         });
     },
     getPatientByDateTime(date, time) {
@@ -66,18 +68,26 @@ createApp({
       const today = new Date().toISOString().split('T')[0];
       return dateStr === today;
     },
-     togglePopover() {
-            this.isPopoverVisible = !this.isPopoverVisible;
-        },
-        handleClickOutside(event) {
-            const popover = document.getElementById('doctor-profile');
-            if (popover && !popover.contains(event.target)) {
-                this.isPopoverVisible = false;
-            }
-        }
+    startConsultation(appointmentId) {
+      if (appointmentId) {
+        window.location.href = `doctors_consultation.html?appointment_id=${appointmentId}`;
+      } else {
+        alert('Идентификатор записи не найден.');
+      }
+    },
+    togglePopover() {
+      this.isPopoverVisible = !this.isPopoverVisible;
+    },
+    handleClickOutside(event) {
+      const popover = document.getElementById('doctor-profile');
+      if (popover && !popover.contains(event.target)) {
+        this.isPopoverVisible = false;
+      }
+    }
   },
   mounted() {
     this.fetchDoctorData();
+    this.fetchSchedule(); 
     document.addEventListener('click', this.handleClickOutside);
   }
 }).mount('#app');

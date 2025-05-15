@@ -35,6 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if (response.ok) {
         alert('На указанный номер отправлен код восстановления пароля.');
+        window.location.href = "/index.html"
       } else {
         alert('Ошибка на сервере. Попробуйте позже.');
       }

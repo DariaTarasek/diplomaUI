@@ -213,7 +213,7 @@ document.addEventListener("DOMContentLoaded", function () {
       .then(response => {
         if (response.ok) {
           alert('Регистрация прошла успешно!');
-          form.reset();
+          window.location.href = "/administrator_account.html"
         } else {
           alert('Ошибка регистрации.');
         }

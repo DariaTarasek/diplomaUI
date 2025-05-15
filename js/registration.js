@@ -330,7 +330,6 @@ document.addEventListener("DOMContentLoaded", function () {
       .then(response => {
         if (response.ok) {
           alert('Регистрация прошла успешно!');
-          form.reset();
           phoneField.readOnly = false;
           phoneVerified = false;
           verifiedPhoneNumber = '';
@@ -339,6 +338,7 @@ document.addEventListener("DOMContentLoaded", function () {
           codeInput.value = '';
           codeMessage.textContent = '';
           requestCodeBtn.disabled = false;
+          window.location.href = "/auth.html"
         } else {
           alert('Ошибка регистрации.');
         }

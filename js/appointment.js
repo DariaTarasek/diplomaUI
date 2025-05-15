@@ -62,7 +62,7 @@ createApp({
   const res = await fetch(`http://192.168.1.207:8080/api/doctors?specialty=${specialtyId}`);
   const rawDoctors = await res.json();
 
-  // Добавляем поле fullName каждому врачу
+ 
   doctors.value = rawDoctors.map(doc => ({
     ...doc,
     fullName: `${doc.second_name} ${doc.first_name} ${doc.surname}`.trim()
@@ -96,7 +96,7 @@ createApp({
 
 const phoneInput = document.getElementById('phone');
 if (phoneInput) {
-  patient.phone = phoneInput.value; // Получаем то, что реально в инпуте
+  patient.phone = phoneInput.value; 
 }
 patient.phone = patient.phone.replace(/\D/g, '')
 
@@ -114,7 +114,11 @@ patient.phone = patient.phone.replace(/\D/g, '')
 
       if (res.ok) {
         alert('Запись успешно создана!');
-        location.reload();
+        if (isAuthorized.value === true) {
+             window.location.href = "/patient_account.html";
+        } else {
+             window.location.href = "/index.html";
+        }
       } else {
         alert('Ошибка при записи. Попробуйте позже.');
       }
@@ -157,18 +161,18 @@ const validateDateRange = () => {
 };
 
 
-        function handleClickOutside(event) {
+function handleClickOutside(event) {
             const popover = document.getElementById('patient-profile');
             if (popover && !popover.contains(event.target)) {
                 isPopoverVisible = false;
             }
-        }
+        };
 
     onMounted(() => {
       fetchSpecialties();
       loadPatientData();
       validateDateRange();
-      document.addEventListener('click', this.handleClickOutside);
+      document.addEventListener('click', handleClickOutside);
     });
 
     
@@ -195,16 +199,6 @@ watch(step, (newVal) => {
   }
 });
 
-//const onPhoneInput = () => {
-  // Маска уже точно применилась
-  //validatePhone();
-//};
-
-//watch(() => patient.phone, () => {
-  //nextTick(() => {
-    //validatePhone();
-  //});
-//});
 
 watch(() => patient.first_name, () => {
   validateFirstName();
@@ -235,7 +229,7 @@ watch(() => patient.second_name, () => {
       isAuthorized,
       isPopoverVisible,
       fullName,
-      birthDateAttrs,
+      birthDateAttrs
     };
   }
 }).mount("#app");

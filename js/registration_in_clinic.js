@@ -12,8 +12,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const popover = document.getElementById('profile-popover');
   const popoverUsername = document.getElementById('popover-username');
 
-  // Фетчим имя пользователя
-  fetch('http://192.168.1.207:8080/api/admin-data') // ← замени на актуальный URL API
+  fetch('http://192.168.1.207:8080/api/admin-data')
     .then(response => {
       if (!response.ok) throw new Error("Ошибка при получении данных");
       return response.json();
@@ -29,12 +28,12 @@ document.addEventListener("DOMContentLoaded", function () {
       popoverUsername.textContent = "Ошибка загрузки";
     });
 
-  // Открытие/закрытие поповера
+  
   button.addEventListener('click', () => {
     popover.classList.toggle('d-none');
   });
 
-  // Закрытие поповера при клике вне него
+
   document.addEventListener('click', (event) => {
     const profileArea = document.getElementById('admin-profile');
     if (!profileArea.contains(event.target)) {
@@ -42,7 +41,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
 
-  // Проверка даты 
   const dateInput = document.getElementById("birthDate");
   if (dateInput) {
     const today = new Date();
@@ -56,7 +54,7 @@ document.addEventListener("DOMContentLoaded", function () {
     dateInput.max = maxDate;
   }
 
-  // Проверка email
+ 
   function validateEmail() {
     const value = email.value.trim();
     if (value.length === 0) {
@@ -75,7 +73,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   email.addEventListener('input', validateEmail);
 
-  // Валидация номера телефона
+  
   const phoneInput = document.getElementById('phone');
   const phoneError = document.getElementById('phoneError');
 
@@ -143,7 +141,7 @@ document.addEventListener("DOMContentLoaded", function () {
         return;
     }
 
-    // Если всё ок — отправляем запрос
+    
     fetch('http://192.168.1.207:8080/api/request-code', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -310,7 +308,6 @@ document.addEventListener("DOMContentLoaded", function () {
       .then(response => {
         if (response.ok) {
           alert('Регистрация прошла успешно!');
-          form.reset();
           phoneField.readOnly = false;
           phoneVerified = false;
           verifiedPhoneNumber = '';
@@ -319,6 +316,7 @@ document.addEventListener("DOMContentLoaded", function () {
           codeInput.value = '';
           codeMessage.textContent = '';
           requestCodeBtn.disabled = false;
+          window.location.href = "/administrator_account.html"
         } else {
           response.text().then(text => {
             alert('Ошибка регистрации: ' + text);
