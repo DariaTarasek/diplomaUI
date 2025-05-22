@@ -33,7 +33,8 @@
                                             <div class="mb-1 small text-black-50">Связаться с нами</div>
                                             <div class="mb-1 small text-black-50"></div>
                                             <div class="fw-bold">+7(000) 000 00 00</div>
-                                        </div> </a><a class="align-items-center d-inline-flex gap-2 lh-1 text-decoration-none"> <span class="bg-primary lh-1 p-2 rounded text-white"> <svg viewBox="0 0 24 24" fill="currentColor" width="1.25em" height="1.25em"> 
+                                        </div> </a>
+                                    <a class="align-items-center d-inline-flex gap-2 lh-1 text-decoration-none"> <span class="bg-primary lh-1 p-2 rounded text-white"> <svg viewBox="0 0 24 24" fill="currentColor" width="1.25em" height="1.25em"> 
                                                 <path d="M18.364 17.364L12 23.728l-6.364-6.364a9 9 0 1 1 12.728 0zM12 13a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"/> 
                                             </svg> </span> <div class="d-lg-block d-none">
                                             <div class="mb-1 small text-black-50">Адрес</div>
@@ -48,9 +49,7 @@
 </button>
                                     <div v-if="isPopoverVisible" class="card shadow-sm position-absolute p-3" style="top: 60px; right: 0; z-index: 1050; min-width: 200px;">
                                         <div class="fw-bold mb-2">{{ fullName }}</div>
-                                        <div class="d-grid gap-2">
-                                            <a href="administrator_profile.html" class="btn btn-outline-primary btn-sm">Упрвление профилем</a>
-                                            <a href="auth_doc.html" class="btn btn-outline-danger btn-sm">Выйти</a>
+                                        <div class="d-grid gap-2"><a href="administrator_profile.html" class="btn btn-outline-primary btn-sm">Упрвление профилем</a><a href="auth_doc.html" class="btn btn-outline-danger btn-sm">Выйти</a>
                                         </div>
                                     </div>
                                 </div>
@@ -59,8 +58,7 @@
                         <hr class="m-0">
                     </div>
                 </div>                 
-                <div class="d-flex justify-content-center align-items-center flex-wrap w-100 ">
-                    <a id="admin_profile" role="button" class="border-white btn btn-outline-light fs-3 text-primary w-50" href="administrator_account.html">Панель администратора</a>
+                <div class="d-flex justify-content-center align-items-center flex-wrap w-100 "><a id="admin_profile" role="button" class="border-white btn btn-outline-light fs-3 text-primary w-50" href="administrator_account.html">Панель администратора</a>
                 </div>                 
                 <div class="container">
                     <hr class="m-0"> 
@@ -70,7 +68,14 @@
                     </button>
                     <div class="collapse navbar-collapse w-100" id="navbarToggler11">
                         <div class="container my-2">
-                            <div class="d-flex flex-wrap gap-3 justify-content-center"><a class="btn btn-lg btn-light border shadow-sm px-4 py-2 d-flex align-items-center gap-2" href="administrator_account.html"> <i class="bi bi-display"></i> Главная </a><a class="btn btn-lg btn-light border shadow-sm px-4 py-2 d-flex align-items-center gap-2" href="admins_schedule_management.html"> <i class="bi bi-calendar3"></i> Управление расписанием </a><a class="btn btn-lg btn-light border shadow-sm px-4 py-2 d-flex align-items-center gap-2" href="admins_patient_list.html"> <i class="bi bi-person-fill-gear"></i>Список пациентов </a><a class="btn btn-lg btn-light border shadow-sm px-4 py-2 d-flex align-items-center gap-2" href="admins_doctor_list.html"><i class="bi bi-person-badge"></i> Список врачей </a><a class="btn btn-lg btn-light border shadow-sm px-4 py-2 d-flex align-items-center gap-2" href="admins_admin_list.html"><i class="bi bi-person-lines-fill"></i> Список администраторов </a><a class="btn btn-lg btn-light border shadow-sm px-4 py-2 d-flex align-items-center gap-2" href="price_list.html"> <img src="img/ruble-sign-solid.svg" style="width: 18px; height: 18px"></img> Прейскурант </a><a class="btn btn-lg btn-light border shadow-sm px-4 py-2 d-flex align-items-center gap-2" href="analytics.html"> <i class="bi bi-graph-up"></i> Аналитика </a>
+                            <div class="d-flex flex-wrap gap-3 justify-content-center">
+                                <a class="btn btn-lg btn-light border shadow-sm px-4 py-2 d-flex align-items-center gap-2" href="administrator_account.html"> <i class="bi bi-display"></i> Главная </a>
+                                <a class="btn btn-lg btn-light border shadow-sm px-4 py-2 d-flex align-items-center gap-2" href="admins_schedule_management.html"> <i class="bi bi-calendar3"></i> Управление расписанием </a>
+                                <a class="btn btn-lg btn-light border shadow-sm px-4 py-2 d-flex align-items-center gap-2" href="admins_patient_list.html"> <i class="bi bi-person-fill-gear"></i>Список пациентов </a>
+                                <a class="btn btn-lg btn-light border shadow-sm px-4 py-2 d-flex align-items-center gap-2" href="admins_doctor_list.html"><i class="bi bi-person-badge"></i> Список врачей </a>
+                                <a class="btn btn-lg btn-light border shadow-sm px-4 py-2 d-flex align-items-center gap-2" href="admins_admin_list.html"><i class="bi bi-person-lines-fill"></i> Список администраторов </a>
+                                <a class="btn btn-lg btn-light border shadow-sm px-4 py-2 d-flex align-items-center gap-2" href="price_list.html"> <img src="img/ruble-sign-solid.svg" style="width: 18px; height: 18px"></img> Прейскурант </a>
+                                <a class="btn btn-lg btn-light border shadow-sm px-4 py-2 d-flex align-items-center gap-2" href="analytics.html"> <i class="bi bi-graph-up"></i> Аналитика </a>
                             </div>
                         </div>                         
                     </div>                     
@@ -79,7 +84,8 @@
             <main> 
                 <div class="container my-4">
                     <h2 class="mb-3 text-center">Список пациентов</h2>
-                    <div class="mb-3 text-center"><a class="btn btn-primary bi-plus-lg" href="registration_in_clinic.html"> Зарегистрировать нового пациента</a>
+                    <div class="mb-3 text-center">
+                        <a class="btn btn-primary bi-plus-lg" href="registration_in_clinic.html"> Зарегистрировать нового пациента</a>
                     </div>
                     <div class="row mb-3">
                         <div class="col-md-6">
@@ -227,7 +233,7 @@
             <footer class="bg-dark text-white-50"> 
                 <div class="container"> 
                     <div class="col-md pb-2 pt-2">
-                        <p class="">&copy; 2002 - 2025. Все права защищены - Название</p>
+                        <p class="text-white">&copy; 2002 - 2025. Все права защищены - Название</p>
                     </div>
                 </div>                 
             </footer>             

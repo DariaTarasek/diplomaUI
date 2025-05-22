@@ -33,8 +33,7 @@
                                             <div class="mb-1 small text-black-50">Связаться с нами</div>
                                             <div class="mb-1 small text-black-50"></div>
                                             <div class="fw-bold">+7(000) 000 00 00</div>
-                                        </div> </a>
-                                    <a class="align-items-center d-inline-flex gap-2 lh-1 text-decoration-none"> <span class="bg-primary lh-1 p-2 rounded text-white"> <svg viewBox="0 0 24 24" fill="currentColor" width="1.25em" height="1.25em"> 
+                                        </div> </a><a class="align-items-center d-inline-flex gap-2 lh-1 text-decoration-none"> <span class="bg-primary lh-1 p-2 rounded text-white"> <svg viewBox="0 0 24 24" fill="currentColor" width="1.25em" height="1.25em"> 
                                                 <path d="M18.364 17.364L12 23.728l-6.364-6.364a9 9 0 1 1 12.728 0zM12 13a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"/> 
                                             </svg> </span> <div class="d-lg-block d-none">
                                             <div class="mb-1 small text-black-50">Адрес</div>
@@ -51,7 +50,9 @@
 </button>
                                     <div v-if="isPopoverVisible" class="card shadow-sm position-absolute p-3" style="top: 60px; right: 0; z-index: 1050; min-width: 200px;">
                                         <div class="fw-bold mb-2">{{ fullName }}</div>
-                                        <div class="d-grid gap-2"><a href="administrator_profile.html" class="btn btn-outline-primary btn-sm">Управление профилем</a><a href="auth_doc.html" class="btn btn-outline-danger btn-sm">Выйти</a>
+                                        <div class="d-grid gap-2">
+                                            <a href="administrator_profile.html" class="btn btn-outline-primary btn-sm">Управление профилем</a>
+                                            <a href="auth_doc.html" class="btn btn-outline-danger btn-sm">Выйти</a>
                                         </div>
                                     </div>
                                 </div>
@@ -60,7 +61,8 @@
                         <hr class="m-0">
                     </div>
                 </div>                 
-                <div class="d-flex justify-content-center align-items-center flex-wrap w-100 "><a id="admin_profile" role="button" class="border-white btn btn-outline-light fs-3 text-primary w-50" href="administrator_account.html">Панель администратора</a>
+                <div class="d-flex justify-content-center align-items-center flex-wrap w-100 ">
+                    <a id="admin_profile" role="button" class="border-white btn btn-outline-light fs-3 text-primary w-50" href="administrator_account.html">Панель администратора</a>
                 </div>                 
                 <div class="container">
                     <hr class="m-0"> 
@@ -70,7 +72,14 @@
                     </button>
                     <div class="collapse navbar-collapse w-100" id="navbarToggler11">
                         <div class="container my-2">
-                            <div class="d-flex flex-wrap gap-3 justify-content-center"><a class="btn btn-lg btn-light border shadow-sm px-4 py-2 d-flex align-items-center gap-2" href="administrator_account.html"> <i class="bi bi-display"></i> Главная </a><a class="btn btn-lg btn-light border shadow-sm px-4 py-2 d-flex align-items-center gap-2" href="admins_schedule_management.html"> <i class="bi bi-calendar3"></i> Управление расписанием </a><a class="btn btn-lg btn-light border shadow-sm px-4 py-2 d-flex align-items-center gap-2" href="admins_patient_list.html"> <i class="bi bi-person-fill-gear"></i>Список пациентов </a><a class="btn btn-lg btn-light border shadow-sm px-4 py-2 d-flex align-items-center gap-2" href="admins_doctor_list.html"><i class="bi bi-person-badge"></i> Список врачей </a><a class="btn btn-lg btn-light border shadow-sm px-4 py-2 d-flex align-items-center gap-2" href="admins_admin_list.html"><i class="bi bi-person-lines-fill"></i> Список администраторов </a><a class="btn btn-lg btn-light border shadow-sm px-4 py-2 d-flex align-items-center gap-2" href="price_list.html"> <img src="img/ruble-sign-solid.svg" style="width: 18px; height: 18px"></img> Прейскурант </a><a class="btn btn-lg btn-light border shadow-sm px-4 py-2 d-flex align-items-center gap-2" href="analytics.html"> <i class="bi bi-graph-up"></i> Аналитика </a>
+                            <div class="d-flex flex-wrap gap-3 justify-content-center">
+                                <a class="btn btn-lg btn-light border shadow-sm px-4 py-2 d-flex align-items-center gap-2" href="administrator_account.html"> <i class="bi bi-display"></i> Главная </a>
+                                <a class="btn btn-lg btn-light border shadow-sm px-4 py-2 d-flex align-items-center gap-2" href="admins_schedule_management.html"> <i class="bi bi-calendar3"></i> Управление расписанием </a>
+                                <a class="btn btn-lg btn-light border shadow-sm px-4 py-2 d-flex align-items-center gap-2" href="admins_patient_list.html"> <i class="bi bi-person-fill-gear"></i>Список пациентов </a>
+                                <a class="btn btn-lg btn-light border shadow-sm px-4 py-2 d-flex align-items-center gap-2" href="admins_doctor_list.html"><i class="bi bi-person-badge"></i> Список врачей </a>
+                                <a class="btn btn-lg btn-light border shadow-sm px-4 py-2 d-flex align-items-center gap-2" href="admins_admin_list.html"><i class="bi bi-person-lines-fill"></i> Список администраторов </a>
+                                <a class="btn btn-lg btn-light border shadow-sm px-4 py-2 d-flex align-items-center gap-2" href="price_list.html"> <img src="img/ruble-sign-solid.svg" style="width: 18px; height: 18px"></img> Прейскурант </a>
+                                <a class="btn btn-lg btn-light border shadow-sm px-4 py-2 d-flex align-items-center gap-2" href="analytics.html"> <i class="bi bi-graph-up"></i> Аналитика </a>
                             </div>
                         </div>                         
                     </div>                     
@@ -117,8 +126,8 @@
                                                         <td>{{ time }}</td>
                                                         <td v-for="(day, dayIndex) in visibleWeekDays" :key="day.date">
                                                             <div v-if="appointments[day.date] && appointments[day.date][time]">
-                                                                <div v-for="(appt, idx) in appointments[day.date][time]" :key="idx" class="mb-2 p-1 border rounded bg-light cursor-pointer" @click="openAppointmentModal(day, time, appt)"><strong>{{ appt.doctor.second_name + " " + appt.doctor.first_name + " " + appt.doctor.surname }}</strong>
-                                                                    <br>
+                                                                <div v-for="(appt, idx) in appointments[day.date][time]" :key="idx" class="mb-2 p-1 border rounded bg-light cursor-pointer" @click="openAppointmentModal(day, time, appt)">
+                                                                    <strong>{{ appt.doctor.second_name + " " + appt.doctor.first_name + " " + appt.doctor.surname }}</strong><br>
                                                                     {{ appt.patient.second_name + " " + appt.patient.first_name + " " + appt.patient.surname }}
                                                                 </div>
                                                             </div>
@@ -133,8 +142,8 @@
                                         <h5 class="mb-3">Неподтверждённые записи</h5>
                                         <ul class="list-group">
                                             <li v-for="(entry, index) in pending" :key="index" class="list-group-item d-flex justify-content-between align-items-center">
-                                                <div><strong>{{ entry.date }} {{ entry.time }}</strong>
-                                                    <br>
+                                                <div>
+                                                    <strong>{{ entry.date }} {{ entry.time }}</strong><br>
                                                     {{ entry.name }}, {{ entry.age }} лет<br>
                                                     {{ entry.phone }}
                                                 </div>
@@ -203,14 +212,11 @@
                                         <button @click="back" class="btn btn-light border w-25 mb-3">Назад</button>
                                         <h4 class="mb-3">Вы записываетесь на приём:</h4>
                                         <ul class="list-unstyled mb-4">
-                                            <li>
-                                                <strong>Специализация:</strong> {{ specialties.find(s => s.id === selectedSpecialization)?.name }}
+                                            <li><strong>Специализация:</strong> {{ specialties.find(s => s.id === selectedSpecialization)?.name }}
                                             </li>
-                                            <li>
-                                                <strong>Врач:</strong> {{ doctors.find(d => d.id === selectedDoctorId)?.fullName }}
+                                            <li><strong>Врач:</strong> {{ doctors.find(d => d.id === selectedDoctorId)?.fullName }}
                                             </li>
-                                            <li>
-                                                <strong>Время:</strong> {{ selectedSlot }}
+                                            <li><strong>Время:</strong> {{ selectedSlot }}
                                             </li>
                                         </ul>
                                         <form @submit.prevent="submitForm">
@@ -279,7 +285,8 @@
                             <button type="button" class="btn-close position-absolute top-0 end-0 m-3" data-bs-dismiss="modal" aria-label="Закрыть"></button>
                             <h5 class="modal-title mb-3">Перенос записи</h5>
                             <div v-if="appointmentSchedule && Object.keys(appointmentSchedule).length">
-                                <div v-for="(slots, date) in appointmentSchedule" :key="date" class="mb-3"><strong>{{ date }}</strong>
+                                <div v-for="(slots, date) in appointmentSchedule" :key="date" class="mb-3">
+                                    <strong>{{ date }}</strong>
                                     <div class="d-flex flex-wrap gap-2 mt-1">
                                         <button v-for="slot in slots" :key="slot" @click="selectTransferSlot(date, slot)" class="btn btn-sm" :class="{
                                 'btn-primary': selectedTransferSlot.date === date && selectedTransferSlot.time === slot,
@@ -308,7 +315,7 @@
             <footer class="bg-dark text-white-50"> 
                 <div class="container"> 
                     <div class="col-md pb-2 pt-2">
-                        <p class="">&copy; 2002 - 2025. Все права защищены - Название</p>
+                        <p class="text-white">&copy; 2002 - 2025. Все права защищены - Название</p>
                     </div>
                 </div>                 
             </footer>             

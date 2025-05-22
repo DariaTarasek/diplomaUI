@@ -32,8 +32,7 @@
                                             <div class="mb-1 small text-black-50">Связаться с нами</div>
                                             <div class="mb-1 small text-black-50"></div>
                                             <div class="fw-bold">+7(000) 000 00 00</div>
-                                        </div> </a>
-                                    <a class="align-items-center d-inline-flex gap-2 lh-1 text-decoration-none"> <span class="bg-primary lh-1 p-2 rounded text-white"> <svg viewBox="0 0 24 24" fill="currentColor" width="1.25em" height="1.25em"> 
+                                        </div> </a><a class="align-items-center d-inline-flex gap-2 lh-1 text-decoration-none"> <span class="bg-primary lh-1 p-2 rounded text-white"> <svg viewBox="0 0 24 24" fill="currentColor" width="1.25em" height="1.25em"> 
                                                 <path d="M18.364 17.364L12 23.728l-6.364-6.364a9 9 0 1 1 12.728 0zM12 13a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"/> 
                                             </svg> </span> <div class="d-lg-block d-none">
                                             <div class="mb-1 small text-black-50">Адрес</div>
@@ -42,8 +41,7 @@
                                 </div>                                 
                             </div>
                             <div class="col-auto" v-cloak> 
-                                <div v-if="!isAuthorized">
-                                    <a class="btn btn-primary" id="userButton" href="auth.html" role="button">Личный кабинет</a> 
+                                <div v-if="!isAuthorized"><a class="btn btn-primary" id="userButton" href="auth.html" role="button">Личный кабинет</a> 
                                 </div>
                                 <div v-else>
                                     <div id="patient-profile" class="position-relative" v-cloak>
@@ -52,7 +50,9 @@
 </button>
                                         <div v-if="isPopoverVisible" class="card shadow-sm position-absolute p-3" style="top: 60px; right: 0; z-index: 1050; min-width: 200px;">
                                             <div class="fw-bold mb-2">{{ fullName }}</div>
-                                            <div class="d-grid gap-2"><a href="patient_profile.html" class="btn btn-outline-primary btn-sm">Управление профилем</a><a href="index.html" class="btn btn-outline-danger btn-sm">Выйти</a>
+                                            <div class="d-grid gap-2">
+                                                <a href="patient_profile.html" class="btn btn-outline-primary btn-sm">Управление профилем</a>
+                                                <a href="index.html" class="btn btn-outline-danger btn-sm">Выйти</a>
                                             </div>
                                         </div>
                                     </div>
@@ -113,11 +113,14 @@
                         <button @click="back" class="btn btn-light border w-25 mb-3">Назад</button>
                         <h4 class="mb-3">Вы записываетесь на приём:</h4>
                         <ul class="list-unstyled mb-4">
-                            <li><strong>Специализация:</strong> {{ specialties.find(s => s.id === selectedSpecialization)?.name }}
+                            <li>
+                                <strong>Специализация:</strong> {{ specialties.find(s => s.id === selectedSpecialization)?.name }}
                             </li>
-                            <li><strong>Врач:</strong> {{ doctors.find(d => d.id === selectedDoctorId)?.fullName }}
+                            <li>
+                                <strong>Врач:</strong> {{ doctors.find(d => d.id === selectedDoctorId)?.fullName }}
                             </li>
-                            <li><strong>Время:</strong> {{ selectedSlot }}
+                            <li>
+                                <strong>Время:</strong> {{ selectedSlot }}
                             </li>
                         </ul>
                         <form @submit.prevent="submitForm">
@@ -168,7 +171,7 @@
             <footer class="bg-dark text-white-50"> 
                 <div class="container"> 
                     <div class="col-md pb-2 pt-2">
-                        <p class="">&copy; 2002 - 2025. Все права защищены - Название</p>
+                        <p class="text-white">&copy; 2002 - 2025. Все права защищены - Название</p>
                     </div>
                 </div>                 
             </footer>             

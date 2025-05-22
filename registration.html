@@ -30,8 +30,7 @@
                                         <div class="mb-1 small text-black-50">Связаться с нами</div>
                                         <div class="mb-1 small text-black-50"></div>
                                         <div class="fw-bold">+7(000) 000 00 00</div>
-                                    </div> </a>
-                                <a class="align-items-center d-inline-flex gap-2 lh-1 text-decoration-none"> <span class="bg-primary lh-1 p-2 rounded text-white"> <svg viewBox="0 0 24 24" fill="currentColor" width="1.25em" height="1.25em"> 
+                                    </div> </a><a class="align-items-center d-inline-flex gap-2 lh-1 text-decoration-none"> <span class="bg-primary lh-1 p-2 rounded text-white"> <svg viewBox="0 0 24 24" fill="currentColor" width="1.25em" height="1.25em"> 
                                             <path d="M18.364 17.364L12 23.728l-6.364-6.364a9 9 0 1 1 12.728 0zM12 13a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"/> 
                                         </svg> </span> <div class="d-lg-block d-none">
                                         <div class="mb-1 small text-black-50">Адрес</div>
@@ -99,28 +98,28 @@
                                 <h3 class="bg-light fw-semibold h3 text-center text-primary mt-3">Зарегистрироваться</h3>
                                 <!-- Фамилия -->
                                 <div class="mb-3">
-                                    <label for="secondName" class="form-label text-primary">Фамилия<span style="color:red;">*</span>
+                                    <label for="secondName" class="form-label text-black">Фамилия<span style="color:red;">*</span>
                                     </label>
                                     <input type="text" name="secondName" id="secondName" required class="form-control" max="256">
                                 </div>
                                 <div id="secondNameError" class="text-danger error"></div>
                                 <!-- Имя -->
                                 <div class="mb-3">
-                                    <label for="firstName" class="form-label text-primary">Имя<span style="color:red;">*</span>
+                                    <label for="firstName" class="form-label text-black">Имя<span style="color:red;">*</span>
                                     </label>
                                     <input type="text" name="firstName" id="firstName" required class="form-control" max="256">
                                     <div id="firstNameError" class="text-danger error"></div>
                                 </div>
                                 <!-- Отчество -->
                                 <div class="mb-3">
-                                    <label for="surname" class="form-label text-primary">Отчество</label>
+                                    <label for="surname" class="form-label text-black">Отчество</label>
                                     <input type="text" name="surname" id="surname" class="form-control" max="256">
                                 </div>
                                 <!-- Пол -->
                                 <div class="mb-3">
-                                    <label for="gender" class="form-label text-primary">Пол<span style="color:red;">*</span>
+                                    <label for="gender" class="form-label text-black">Пол<span style="color:red;">*</span>
                                     </label>
-                                    <select name="gender" id="gender" required class="form-control text-primary">
+                                    <select name="gender" id="gender" required class="form-control text-muted">
                                         <option value="">--Выберите--</option>
                                         <option value="male">Мужской</option>
                                         <option value="female">Женский</option>
@@ -128,13 +127,13 @@
                                 </div>
                                 <!-- Дата рождения -->
                                 <div class="mb-3">
-                                    <label for="birthDate" class="form-label text-primary">Дата рождения<span style="color:red;">*</span>
+                                    <label for="birthDate" class="form-label text-black">Дата рождения<span style="color:red;">*</span>
                                     </label>
-                                    <input type="date" name="birthDate" id="birthDate" required class="form-control text-primary">
+                                    <input type="date" name="birthDate" id="birthDate" required class="form-control text-muted">
                                 </div>
                                 <!-- Номер телефона -->
                                 <div class="mb-3">
-                                    <label for="phone" class="form-label text-primary">Номер телефона<span style="color:red;">*</span>
+                                    <label for="phone" class="form-label text-black">Номер телефона<span style="color:red;">*</span>
                                     </label>
                                     <input type="tel" name="phone" id="phone" required class="form-control" placeholder="+7 (___) ___-__-__"> 
                                     <div id="phoneError" class="text-danger error" style="min-height: 1.2em; word-break: break-word; word-wrap: break-word; overflow-wrap: break-word; white-space: normal;"></div>
@@ -151,7 +150,7 @@
                                 </div>
                                 <!-- Подтверждение номера телефона -->
                                 <div class="mb-3">
-                                    <button type="button" id="requestCodeBtn" class="btn btn-outline-primary mb-3 w-100">Подтвердить номер телефона<span style="color:red;">*</span>
+                                    <button type="button" id="requestCodeBtn" class="border-dark btn mb-3 text-black w-100">Подтвердить номер телефона<span style="color:red;">*</span>
                                     </button>
                                 </div>
                                 <div class="mb-3" id="codeSection" style="display: none;">
@@ -163,24 +162,24 @@
                                 </div>
                                 <!-- Email -->
                                 <div class="mb-3">
-                                    <label for="email" class="form-label text-primary">Email</label>
+                                    <label for="email" class="form-label text-black">Email</label>
                                     <input type="email" name="email" id="email" class="form-control" max="256">
                                     <div id="emailError" data-email-error class="text-danger error" style="min-height: 1.2em; word-break: break-word; word-wrap: break-word; overflow-wrap: break-word; white-space: normal;"></div>
                                 </div>
                                 <!-- Пароль -->
                                 <div class="mb-3">
-                                    <label for="password" class="form-label text-primary">Пароль<span style="color:red;">*</span>
+                                    <label for="password" class="form-label text-black">Пароль<span style="color:red;">*</span>
                                     </label>
                                     <input type="password" name="password" id="password" required class="form-control" max="128">
                                     <div id="passwordError" class="text-danger error" style="min-height: 1.2em; word-break: break-word; word-wrap: break-word; overflow-wrap: break-word; white-space: normal;"></div>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="password_check" class="form-label text-primary">Повторите пароль<span style="color:red;">*</span>
+                                    <label for="password_check" class="form-label text-black">Повторите пароль<span style="color:red;">*</span>
                                     </label>
                                     <input type="password" name="password_check" id="password_check" required class="form-control" max="128">
                                     <div id="passwordCheckError" class="text-danger error" style="min-height: 1.2em; word-break: break-word; word-wrap: break-word; overflow-wrap: break-word; white-space: normal;"></div>
                                 </div>
-                                <div class="mb-3">
+                                <div class="mb-3 text-black">
                                     <input type="checkbox" required> 
                                     «Согласен на обработку персональных данных»
                                 </div>
@@ -205,7 +204,7 @@
         <footer class="bg-dark text-white-50"> 
             <div class="container"> 
                 <div class="col-md pb-2 pt-2">
-                    <p class="">&copy; 2002 - 2025. Все права защищены - Название</p>
+                    <p class="text-white">&copy; 2002 - 2025. Все права защищены - Название</p>
                 </div>
             </div>             
         </footer>
